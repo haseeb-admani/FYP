@@ -1,0 +1,103 @@
+<div class="row">
+  
+    <div class="col">
+      <div class="p-3 mb-2 bg-white text-dark">
+
+        <h2 class="mt-3 p-1 text-center">
+          Matches for ${searchText1} <br><br>
+          <small style=size:10px;>Search new term: </small>
+
+          <div class="col offset-3">
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText1" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-warning" @click="matchingSearch(searchText1)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+            Total matches: ${total}
+          </small>
+        </h2>
+        <canvas id="myChart" width="400" height="250"></canvas>
+      </div>
+
+    </div>
+
+    <div class="col">
+      <div class="p-3 mb-2 bg-white text-dark">
+
+        <h2 class="mt-3 p-1 text-center">
+          Matches for ${searchText2} <br><br>
+          <small style=size:10px;>Search new term: </small>
+
+          <div class="col offset-3">
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText2" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-warning" @click="matchingSearch2(searchText2)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+            Total matches: ${total2}
+          </small>
+        </h2>
+        <canvas id="mySecondChart" width="400" height="250"></canvas>
+      </div>
+
+    </div>
+
+    <br></br>
+
+    <div class="row">
+
+
+      <div class="col">
+        <div class="p-3 mb-2 bg-white text-dark">
+
+          <h2 class="mt-3 p-1 text-center">
+            Matches for ${searchText3} <br><br>
+            <small style=size:10px;>Search new term: </small>
+
+            <div class="col offset-3">
+              <input type="text" class="form-control border border-dark border-2"
+                placeholder="Search a string to populate graph" v-model.lazy="searchText3" style="width: 300px;">
+            </div>
+
+            <button class="btn btn-warning" @click="matchingSearch3(searchText3)">Update Graph</button>
+            <br>
+            <small style="font-size: 10px;">
+              Total matches: ${total3}
+            </small>
+          </h2>
+          <canvas id="myThirdChart" width="400" height="250"></canvas>
+        </div>
+
+      </div>
+
+
+      <div class="col">
+        <div class="p-3 mb-2 bg-white text-dark">
+
+          <h2 class="mt-3 p-1 text-center">
+            Matches for ${searchText4} <br><br>
+            <small style=size:10px;>Search new term: </small>
+
+            <div class="col offset-3">
+              <input type="text" class="form-control border border-dark border-2"
+                placeholder="Search a string to populate graph" v-model.lazy="searchText4" style="width: 300px;">
+            </div>
+
+            <button class="btn btn-warning" @click="matchingSearch4(searchText4)">Update Graph</button>
+            <br>
+            <small style="font-size: 10px;">
+              Total matches: ${total4}
+            </small>
+          </h2>
+          <canvas id="myFourthChart" width="400" height="250"></canvas>
+        </div>
+
+      </div>
+
+
+
+    </div>

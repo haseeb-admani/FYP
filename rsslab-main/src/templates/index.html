@@ -1,0 +1,573 @@
+{% extends 'base.html' %} {% block content %}
+
+<script src="https://unpkg.com/vue@3"></script>
+<div class=" p-3">
+  <h6> Total Number of records are: {{notes|length}} </h6>
+  <hr />
+  <div class="row mt-4">
+
+
+    <div class="col-sm-8">
+      <h3>
+        <p class="text-center"> Breakdown by number of diagnosis </p>
+      </h3>
+      <canvas class="border border-dark p-3 shadow" id="diag-monthly"></canvas>
+      <!-- <p>Input class="form-check-input" Number of patients graph here {{charts.diag_monthly}}</p> -->
+    </div>
+
+    <div class="col-sm-4">
+      <h3>
+        <p class="text-center"> Breakdown by gender </p>
+      </h3>
+      <canvas class="border border-dark p-3 shadow" id="gender-dist"></canvas>
+    </div>
+
+
+  </div>
+
+
+  <div class="row mt-4">
+
+    <div class="col-6">
+      <h3>
+        <p class="text-center"> Breakdown by Age </p>
+      </h3>
+      <canvas class="border border-dark p-3 shadow" id="age-dist-graph"></canvas>
+    </div>
+
+    <div class="col-6">
+
+      <h3>
+        <p class="text-center"> Top 5 Symptoms </p>
+      </h3>
+      <canvas class="border border-dark p-3 shadow" id="freq-symptoms"></canvas>
+    </div>
+  </div>
+
+
+  <div id="app" class="row mt-4">
+
+    <div class="col-4">
+
+      <div class="p-3 mb-2 bg-white text-dark">
+
+        <div class="border border-dark p-3 shadow">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="fever" value="fever" v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="fever">Fever</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="headache" value="headache"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="headache">Headache</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="nausea" value="nausea" v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="nausea">Nausea</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="abdominalpain" value="abdominal pain"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="abdominalpain">Abdominal Pain</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="cough" value="cough" v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="cough">Cough</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="palpitations" value="palpitations"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="palpitations">Palpitations</label>
+          </div>
+
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="vomiting" value="vomiting"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="vomiting">Vomiting</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="sweating" value="sweating"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="sweating">Sweating</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="anxiety" value="anxiety"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="anxiety">Anxiety</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="irregularperiods" value="irregular periods"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="irregularperiods">Irregular periods</label>
+          </div>
+
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hypertension" value="hypertension"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="hypertension">Hypertension</label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="chestpain" value="chest pain"
+              v-model="combinationOfSymptoms">
+            <label class="form-check-label" for="chestpain">Chest pain</label>
+          </div>
+
+          <button type="button" class="btn btn-dark mt-3" @click="combinationTrend()">Update Graph</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-8">
+      <h4> Select Symptoms on the left to find their collective trend</h4>
+
+      <canvas class="border border-dark p-3 shadow" id="combo-chart"></canvas>
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <div class="bg-white text-dark border border-dark p-3 m-3">
+
+          <h4 class=" p-1">
+            Matches for "${searchText1}"
+          </h4>
+          <div class="form-group">
+
+            <label for="search1">Search New Term</label>
+            <input name='search1' type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText1" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-dark btn-sm mt-3" @click="matchingSearch(searchText1)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+          </small>
+          <canvas id="search-chart-1"></canvas>
+        </div>
+
+      </div>
+      <div class="col-6">
+        <div class="bg-white text-dark border border-dark p-3 m-3">
+
+          <h4 class=" p-1">
+            Matches for "${searchText2}"
+          </h4>
+          <div class="form-group">
+
+            <label for="search2">Search New Term</label>
+            <input name='search2' type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText2" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-dark btn-sm mt-3" @click="matchingSearch2(searchText2)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+          </small>
+          <canvas id="search-chart-2"></canvas>
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="bg-white text-dark border border-dark p-3 m-3">
+
+          <h4 class=" p-1">
+            Matches for "${searchText3}"
+          </h4>
+          <div class="form-group">
+
+            <label for="search3">Search New Term</label>
+            <input name='search3' type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText3" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-dark btn-sm mt-3" @click="matchingSearch3(searchText3)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+          </small>
+          <canvas id="search-chart-3"></canvas>
+        </div>
+
+      </div>
+      <div class="col-6">
+        <div class="bg-white text-dark border border-dark p-3 m-3">
+
+          <h4 class=" p-1">
+            Matches for "${searchText4}"
+          </h4>
+          <div class="form-group">
+
+            <label for="search4">Search New Term</label>
+            <input name='search4' type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText4" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-dark btn-sm mt-3" @click="matchingSearch4(searchText4)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+          </small>
+          <canvas id="search-chart-4"></canvas>
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+
+
+  <script>
+    const { createApp } = Vue
+
+    let my_vue_app = createApp({
+      delimiters: ['${', '}'],
+      data() {
+        return {
+          message: 'Hello Vue!',
+          combinationOfSymptoms: [],
+          combinationResult: {
+            label: [],
+            data: []
+          },
+          comboChart: null,
+          searchText1: '',
+          searchChart1: null,
+          searchRes1: {
+            label: [],
+            data: []
+          },
+          searchText2: '',
+          searchChart2: null,
+          searchRes2: {
+            label: [],
+            data: []
+          },
+          searchText3: '',
+          searchChart3: null,
+          searchRes3: {
+            label: [],
+            data: []
+          },
+          searchText4: '',
+          searchChart4: null,
+          searchRes4: {
+            label: [],
+            data: []
+          },
+          colorsArray: ['#6610f2', '#d63384']
+        }
+      },
+      methods: {
+        matchingSearch4(searchText) {
+          axios.get('/api-search', {
+            params: {
+              query: searchText
+            }
+          }).then((res) => {
+            this.searchRes4 = res.data
+          }).catch(err => {
+            console.log(err)
+          }).then(() => {
+            this.searchChart4?.destroy();
+
+            const colorsArray = this.colorsArray
+
+            const ctx = document.getElementById('search-chart-4').getContext('2d');
+            this.searchChart4 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: this.searchRes4.label,
+                datasets: [{
+                  label: 'Number of records',
+                  data: this.searchRes4.data,
+                  backgroundColor: colorsArray,
+                  borderColor: [
+
+                  ],
+                }]
+              },
+
+            })
+          });
+          // api-search
+        },
+        matchingSearch3(searchText) {
+          axios.get('/api-search', {
+            params: {
+              query: searchText
+            }
+          }).then((res) => {
+            this.searchRes3 = res.data
+          }).catch(err => {
+            console.log(err)
+          }).then(() => {
+            this.searchChart3?.destroy();
+
+            const colorsArray = this.colorsArray
+
+            const ctx = document.getElementById('search-chart-3').getContext('2d');
+            this.searchChart3 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: this.searchRes3.label,
+                datasets: [{
+                  label: 'Number of records',
+                  data: this.searchRes3.data,
+                  backgroundColor: colorsArray,
+                  borderColor: [
+
+                  ],
+                }]
+              },
+
+            })
+          });
+          // api-search
+        },
+        matchingSearch2(searchText) {
+          axios.get('/api-search', {
+            params: {
+              query: searchText
+            }
+          }).then((res) => {
+            this.searchRes2 = res.data
+          }).catch(err => {
+            console.log(err)
+          }).then(() => {
+            this.searchChart2?.destroy();
+
+            const colorsArray = this.colorsArray
+
+            const ctx = document.getElementById('search-chart-2').getContext('2d');
+            this.searchChart2 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: this.searchRes2.label,
+                datasets: [{
+                  label: 'Number of records',
+                  data: this.searchRes2.data,
+                  backgroundColor: colorsArray,
+                  borderColor: [
+
+                  ],
+                }]
+              },
+
+            })
+          });
+          // api-search
+        },
+        matchingSearch(searchText) {
+          axios.get('/api-search', {
+            params: {
+              query: searchText
+            }
+          }).then((res) => {
+            this.searchRes1 = res.data
+          }).catch(err => {
+            console.log(err)
+          }).then(() => {
+            this.searchChart1?.destroy();
+
+            const colorsArray = this.colorsArray
+
+            const ctx = document.getElementById('search-chart-1').getContext('2d');
+            this.searchChart1 = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: this.searchRes1.label,
+                datasets: [{
+                  label: 'Number of records',
+                  data: this.searchRes1.data,
+                  backgroundColor: colorsArray,
+                  borderColor: [
+
+                  ],
+                }]
+              },
+
+            })
+          });
+          // api-search
+        },
+        combinationTrend() {
+          const myData = (this.combinationOfSymptoms)
+          axios.get('/api-symptoms', {
+            params: myData,
+          }).then((res) => {
+            this.combinationResult = res.data
+          }).catch(err => {
+            console.log(err)
+          }).then(() => {
+            this.comboChart?.destroy();
+
+            const colorsArray = this.colorsArray
+
+            const ctx = document.getElementById('combo-chart').getContext('2d');
+            this.comboChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: this.combinationResult.label,
+                datasets: [{
+                  label: '# of occurrences of ' + this.combinationOfSymptoms,
+                  data: this.combinationResult.data,
+                  backgroundColor: colorsArray,
+                  borderColor: [
+
+                  ],
+                }]
+              },
+            });
+            // this.comboSymptoms.data.datasets.data = this.combinationResult.data
+            // this.comboSymptoms.data.labels = this.combinationResult.labels
+          })
+        }
+      },
+      mounted() {
+
+      }
+    }).mount('#app')
+  </script>
+
+
+  <script>
+    const colorsArray = ['#6610f2', '#d63384']
+    // Gender Distribution Graph Config
+    const genderDistGraph = {
+      type: 'pie',
+      data: {
+        labels: ['Male', 'Female'],
+        datasets: [{
+          label: 'Gender Distribution of Patients',
+          data: [{{ charts.gender_dist.male | safe }}, {{ charts.gender_dist.female | safe }}],
+      backgroundColor: colorsArray,
+      hoverOffset: 4
+    }
+                  ]
+                },
+              };
+    // Diagnosis Monthly Graph Config
+    const diagFreqGraph = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: {{ charts.diag_monthly.values | safe }},
+      backgroundColor: colorsArray,
+      label: 'Number of patients',
+    }],
+      labels: {{ charts.diag_monthly.keys| safe }}
+            },
+    options: {
+      responsive: true,
+        scales: {
+        x: {
+          title: {
+            display: true,
+              text: 'Month'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+              text: 'Patients'
+          },
+          ticks: {
+            // forces step size to be 50 units
+            stepSize: 1
+          }
+        }
+
+      },
+    }
+            
+          };
+
+
+    // Age Breakdown Graph
+    const ageFreqGraph = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: {{ charts.age.data | safe }},
+      backgroundColor: colorsArray,
+      label: 'Breakdown by Age',
+    }],
+      labels: {{ charts.age.labels| safe }}
+            },
+    options: {
+      responsive: true,
+            }
+          };
+
+    // Top 5 Symptoms Graph
+    const mostFreqSymptoms = {
+      type: 'bar',
+      data: {
+        datasets: [{
+          data: {{ charts.freq_symptoms.data | safe }},
+      backgroundColor: colorsArray,
+      label: 'Num Of Diagnosis',
+    }],
+      labels: {{ charts.freq_symptoms.labels| safe }}
+            },
+    options: {
+      responsive: true,
+        scales: {
+        y: {
+          ticks: {
+            stepSize: 1
+          }
+        }
+      }
+    },
+            
+          };
+
+    // Combo Graph
+
+
+
+
+    window.onload = function () {
+      let ctx = document.getElementById('diag-monthly').getContext('2d');
+      let ctx2 = document.getElementById('gender-dist').getContext('2d');
+      let ctx3 = document.getElementById('age-dist-graph').getContext('2d');
+      let ctx4 = document.getElementById('freq-symptoms').getContext('2d');
+      // let ctx5 = document.getElementById('combo-chart').getContext('2d');
+
+      window.myPie = new Chart(ctx, diagFreqGraph);
+      window.myBar = new Chart(ctx2, genderDistGraph);
+      window.myAge = new Chart(ctx3, ageFreqGraph)
+      window.myFreqSymptoms = new Chart(ctx4, mostFreqSymptoms)
+      // window.myCombo = new Chart(ctx5, my_vue_app.comboSymptoms)
+    };
+
+
+  </script>
+  {% endblock %}

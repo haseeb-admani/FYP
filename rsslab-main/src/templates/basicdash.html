@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+<!-- App Starts HERE!--> 
+
+{% block content %}
+
+
+
+  <div id="basicapp">
+
+    <br><br>
+
+    <div class ="row">
+
+        <div class = "col-sm-6">
+
+        <button type="button" class="btn btn-dark" @click=" maxNewChartAlert(); addNewChart({{totalGraphCount}}); showUpdateButton({{totalGraphCount}}); showDeleteButton({{totalGraphCount}}); showTextBox({{totalGraphCount}});">Add New Graph</button>
+  
+        </div>
+
+    </div>    
+
+
+    <br><br>
+
+    <div class="row">
+ 
+        {% for graphNo in numOfGraphs %}
+
+          <div class = "col-sm-6">  
+
+         <button id = "showChartButton{{graphNo}}" type="button" class="btn btn-dark" @click="LoadSavedCharts({{graphNo}}); ">Show Graph</button> 
+         <button id = "delbutton{{graphNo}}"  type="button" class="btn btn-danger" style="display:none" @click="deleteCanvas({{graphNo}})">Delete Graph</button>
+
+         <canvas id= "newGraph{{graphNo}}" width="1" height="1"></canvas>
+
+
+          </div>
+          
+        
+        {% endfor %}
+
+     </div>
+
+
+        <br><br><br><br>
+
+        <div class="row">
+
+          
+          {% for newChartNo in maxNewChart %}
+
+              <div class = "col-sm-6">
+
+
+                <button id = "button{{newChartNo}}"  type="button" class="btn btn-success" style="display:none">Update Graph</button>
+                <br>
+
+                <button id = "delbutton{{newChartNo}}"  type="button" class="btn btn-danger" style="display:none" @click="deleteCanvas({{newChartNo}})">Delete Graph</button>
+
+                <br>
+
+               <input type="text" id ="textbox{{newChartNo}}" class="form-control border border-dark border-2"
+                placeholder="Search a string to populate graph" style="display:none">
+
+               <br>  
+
+                <canvas id= "newChart{{newChartNo}}" width="1" height="1"></canvas>
+
+                </div>
+
+          {% endfor %}      
+
+
+        </div>
+
+
+
+    <!----      <div class = "col-sm-6" v-for="x in newChartCount" :key="componentKey">
+            Hello newChart${x}
+        <canvas id= "newChart1" width="1" height="1"></canvas>  
+          </div> !-->
+            
+
+         
+
+     <!----     <div class = "col-sm-6" v-for="x in maxNewCharts">
+            hello
+            newC
+
+          <canvas id= "newChart${x}" width="1" height="1"></canvas>
+
+          </div>
+
+          !-->
+
+
+        
+          
+    </div>
+          
+
+  </div>
+
+ 
+<script>
+
+
+    
+
+    var app = new Vue({
+
+        el: '#basicapp',
+        delimiters: ['${', '}'],
+
+        data:{
+            myTestVariable: 55,
+          //  graphCount: 0,
+            graphNo: null,
+            secondChart: null,
+            newChartCount: 0,
+            newUpdateButtonCount: 0,
+            newTextBox: 0,
+            newDelButtonCount: 0,
+            myChart : [],
+          // dynamicGraph : null,
+    },
+
+    methods:{
+
+        
+        createGraph() { 
+
+          
+            console.log("In create graph");
+
+            const ctx = document.getElementById('myTestChart').getContext('2d');
+            this.myChart = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender Distribution of Patients',
+                  data: [40, 60],
+                  backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                  ],
+
+                  hoverOffset: 4
+                }
+                ]
+              },
+            });
+
+
+              console.log("Exiting create graph");
+              console.log(myTestChart);
+              console.log(this.myChart);
+              console.log(ctx);
+
+              },
+
+        LoadSavedCharts(graphNo) {
+
+
+            var newGraph = "newGraph" + graphNo;
+            var showChartButtonID = "showChartButton" + graphNo;
+            var delButtonID = "delbutton" + graphNo;
+
+            if(typeof this.myChart[graphNo] !== 'undefined') {
+              this.myChart[graphNo].destroy(); 
+            }
+
+            const ctx = document.getElementById(newGraph).getContext('2d');
+            this.myChart[graphNo] = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: ['Jan','Feb'],
+                datasets: [{
+                  label: '# of occurrences of ',
+                  data: [50, 20],
+                  backgroundColor: [
+                    '#20c997',
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  lineTension: 0.5,
+                  pointRadius: 0
+                }]
+              },
+
+
+
+            });
+
+           document.getElementById(showChartButtonID).style.display = 'none';
+          // document.getElementById(delButtonID).style.display = 'block';
+
+
+          
+           // this.graphCount++;
+            console.log(graphNo);
+
+        },
+        
+        
+        addNewChart(totalGraphCount) {
+
+          this.newChartCount += 1;
+          var newChartCount = totalGraphCount + this.newChartCount;
+          
+          var newChart = "newChart" + newChartCount;
+
+          console.log(newChart);
+
+   //       if(typeof myChart !== 'undefined') {
+     //         myChart.destroy(); 
+      //      }
+
+          const ctx = document.getElementById(newChart).getContext('2d');
+            this.myChart[newChartCount]= new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: ['Jan','Feb'],
+                datasets: [{
+                  label: '# of occurrences of ',
+                  data: [50, 20],
+                  backgroundColor: [
+                    '#20c997',
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  lineTension: 0.5,
+                  pointRadius: 0
+                }]
+              },
+
+
+
+            });
+
+//           this.newChartCount++;
+
+           console.log(this.newChartCount);
+
+           console.log(this.myChart);
+
+         
+
+         
+
+              console.log("END add new graph")
+        },
+
+        showUpdateButton(totalGraphCount) {
+
+          this.newUpdateButtonCount += 1;
+
+          var tmp = totalGraphCount + this.newUpdateButtonCount;
+
+          var buttonID = "button" + tmp
+
+          console.log(buttonID)
+
+          document.getElementById(buttonID).style.display = 'block';
+
+
+        },
+
+        showDeleteButton(totalGraphCount) {
+          console.log("in show delete button")
+
+          this.newDelButtonCount += 1;
+
+          var tmp = totalGraphCount + this.newDelButtonCount;
+          var deleteButton = "delbutton" + tmp;
+          console.log(deleteButton);
+
+          document.getElementById(deleteButton).style.display = 'block';
+
+          
+
+        },
+
+       showTextBox(totalGraphCount) {
+
+        this.newTextBox += 1;
+
+        var tmp = totalGraphCount + this.newTextBox
+
+        var textBoxID = "textbox" + tmp;
+
+        document.getElementById(textBoxID).style.display = 'block';
+
+       },
+       
+       deleteCanvas(canvasNo) {
+        console.log("In delete ",canvasNo)
+
+        var buttonID = "button" + canvasNo; 
+        var textBoxID = "textbox" + canvasNo;
+        var deleteButton = "delbutton" + canvasNo; 
+
+        document.getElementById(buttonID).style.display = 'none';
+        document.getElementById(textBoxID).style.display = 'none';
+        document.getElementById(deleteButton).style.display = 'none';
+        console.log(this.myChart)
+
+        this.myChart[canvasNo].destroy();
+
+        
+
+       },
+
+       maxNewChartAlert() {
+        if(this.newChartCount > 9) {
+          alert("Max New Graph Limit Reached. Refresh Page to add new charts");
+        }
+       },
+              
+
+    },
+
+      created() {
+
+
+         
+          },
+
+    beforemount() {
+
+
+
+          },
+
+    mounted() {
+
+          console.log("In created");
+        //  this.createGraph();
+          
+        },
+
+    beforeUpdate() {
+
+
+
+    },
+    
+    updated() {
+
+
+
+    },
+
+    })
+
+
+</script>    
+
+     
+{% endblock %}
