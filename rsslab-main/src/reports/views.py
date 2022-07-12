@@ -33,9 +33,9 @@ def index(request):
 
 @login_required
 def reports_all(request):
-    # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
     # # Calculating Monthly Diagnosis
-    # notes = list(all_notes)
+    notes = list(all_notes)
     # # print(notes)
     # df = pd.DataFrame(notes)
     # df.record_date = pd.to_datetime(df.record_date)
@@ -155,8 +155,8 @@ def reports_all(request):
     #     'data': top5_data,
     # }
 
-    # context = {
-    #     'notes': len(notes),
-    #     'charts': charts,
-    # }
-    return render(request, 'index.html')
+    context = {
+        'notes': len(notes)
+    }
+
+    return render(request, 'index.html', context)
