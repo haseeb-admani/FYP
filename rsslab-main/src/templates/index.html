@@ -1,51 +1,54 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
 
-<script src="https://unpkg.com/vue@3"></script>
-<div class=" p-3">
-  <h6> Total Number of records are: {{notes|length}} </h6>
-  <hr />
-  <div class="row mt-4">
+<!-- <script src="https://unpkg.com/vue@3"></script> -->
+<div id="app" class="row mt-4">
+  <div class=" p-3">
+    <h6> Total Number of records are: {{notes}} </h6>
+    <hr />
+    <div class="row mt-4">
 
 
-    <div class="col-sm-8">
-      <h3>
-        <p class="text-center"> Breakdown by number of diagnosis </p>
-      </h3>
-      <canvas class="border border-dark p-3 shadow" id="diag-monthly"></canvas>
-      <!-- <p>Input class="form-check-input" Number of patients graph here {{charts.diag_monthly}}</p> -->
+      <div class="col-sm-8">
+        <h3>
+          <p class="text-center"> Breakdown by number of diagnosis </p>
+        </h3>
+        <canvas class="border border-dark p-3 shadow" id="diag-monthly"></canvas>
+        <!-- <p>Input class="form-check-input" Number of patients graph here {{charts.diag_monthly}}</p> -->
+      </div>
+
+      <div class="col-sm-4">
+        <h3>
+          <p class="text-center"> Breakdown by gender </p>
+        </h3>
+        <canvas class="border border-dark p-3 shadow" id="gender-dist"></canvas>
+      </div>
+
+
     </div>
 
-    <div class="col-sm-4">
-      <h3>
-        <p class="text-center"> Breakdown by gender </p>
-      </h3>
-      <canvas class="border border-dark p-3 shadow" id="gender-dist"></canvas>
+
+    <div class="row mt-4">
+
+      <div class="col-6">
+        <h3>
+          <p class="text-center"> Breakdown by Age </p>
+        </h3>
+        <canvas class="border border-dark p-3 shadow" id="age-dist-graph"></canvas>
+      </div>
+
+      <div class="col-6">
+
+        <h3>
+          <p class="text-center"> Top 5 Symptoms </p>
+        </h3>
+        <canvas class="border border-dark p-3 shadow" id="freq-symptoms"></canvas>
+      </div>
     </div>
 
 
-  </div>
 
-
-  <div class="row mt-4">
-
-    <div class="col-6">
-      <h3>
-        <p class="text-center"> Breakdown by Age </p>
-      </h3>
-      <canvas class="border border-dark p-3 shadow" id="age-dist-graph"></canvas>
-    </div>
-
-    <div class="col-6">
-
-      <h3>
-        <p class="text-center"> Top 5 Symptoms </p>
-      </h3>
-      <canvas class="border border-dark p-3 shadow" id="freq-symptoms"></canvas>
-    </div>
-  </div>
-
-
-  <div id="app" class="row mt-4">
 
     <div class="col-4">
 
@@ -239,52 +242,62 @@
   </div>
 
 
+</div>
 
 
 
-  <script>
-    const { createApp } = Vue
+<script>
 
-    let my_vue_app = createApp({
-      delimiters: ['${', '}'],
-      data() {
-        return {
-          message: 'Hello Vue!',
-          combinationOfSymptoms: [],
-          combinationResult: {
-            label: [],
-            data: []
-          },
-          comboChart: null,
-          searchText1: '',
-          searchChart1: null,
-          searchRes1: {
-            label: [],
-            data: []
-          },
-          searchText2: '',
-          searchChart2: null,
-          searchRes2: {
-            label: [],
-            data: []
-          },
-          searchText3: '',
-          searchChart3: null,
-          searchRes3: {
-            label: [],
-            data: []
-          },
-          searchText4: '',
-          searchChart4: null,
-          searchRes4: {
-            label: [],
-            data: []
-          },
-          colorsArray: ['#6610f2', '#d63384']
-        }
+
+  var app = new Vue({
+    el: '#app',
+    delimiters: ['${', '}'],
+    data: {
+
+      colorsArray: ['#6610f2', '#d63384'],
+      message: 'Hello Vue!',
+      combinationOfSymptoms: [],
+      combinationResult: {
+        label: [],
+        data: []
       },
-      methods: {
-        matchingSearch4(searchText) {
+      comboChart: null,
+      searchText1: '',
+      searchChart1: null,
+      searchRes1: {
+        label: [],
+        data: []
+      },
+      searchText2: '',
+      searchChart2: null,
+      searchRes2: {
+        label: [],
+        data: []
+      },
+      searchText3: '',
+      searchChart3: null,
+      searchRes3: {
+        label: [],
+        data: []
+      },
+      searchText4: '',
+      searchChart4: null,
+      searchRes4: {
+        label: [],
+        data: []
+      },
+      ageDistGraph: null,
+      monthlyDiagGraph: null,
+      ageGraph: null,
+      genderDistGraph: null,
+      mostFreqGraph: null,
+      colorsArray: ['#6610f2', '#d63384', '#ff9999', '#cc00ff', '#ccff99', '#33cc33', '#333399', '#66ccff']
+
+    },
+    methods: {
+      matchingSearch4(searchText) {
+        this.searchText4 = searchText;
+        if (searchText !== '') {
           axios.get('/api-search', {
             params: {
               query: searchText
@@ -315,9 +328,12 @@
 
             })
           });
-          // api-search
-        },
-        matchingSearch3(searchText) {
+        }
+        // api-search
+      },
+      matchingSearch3(searchText) {
+        this.searchText3 = searchText;
+        if (searchText !== '') {
           axios.get('/api-search', {
             params: {
               query: searchText
@@ -348,9 +364,12 @@
 
             })
           });
-          // api-search
-        },
-        matchingSearch2(searchText) {
+        }
+        // api-search
+      },
+      matchingSearch2(searchText) {
+        this.searchText2 = searchText;
+        if (searchText !== '') {
           axios.get('/api-search', {
             params: {
               query: searchText
@@ -381,9 +400,13 @@
 
             })
           });
-          // api-search
-        },
-        matchingSearch(searchText) {
+        }
+        // api-search
+      },
+      matchingSearch(searchText) {
+        this.searchText1 = searchText;
+        console.log("search term= ", this.searchText1)
+        if (searchText !== '') {
           axios.get('/api-search', {
             params: {
               query: searchText
@@ -414,140 +437,237 @@
 
             })
           });
-          // api-search
-        },
-        combinationTrend() {
-          const myData = (this.combinationOfSymptoms)
-          axios.get('/api-symptoms', {
-            params: myData,
-          }).then((res) => {
-            this.combinationResult = res.data
-          }).catch(err => {
-            console.log(err)
-          }).then(() => {
-            this.comboChart?.destroy();
-
-            const colorsArray = this.colorsArray
-
-            const ctx = document.getElementById('combo-chart').getContext('2d');
-            this.comboChart = new Chart(ctx, {
-              type: 'bar',
-              data: {
-                labels: this.combinationResult.label,
-                datasets: [{
-                  label: '# of occurrences of ' + this.combinationOfSymptoms,
-                  data: this.combinationResult.data,
-                  backgroundColor: colorsArray,
-                  borderColor: [
-
-                  ],
-                }]
-              },
-            });
-            // this.comboSymptoms.data.datasets.data = this.combinationResult.data
-            // this.comboSymptoms.data.labels = this.combinationResult.labels
-          })
         }
+        // api-search
       },
-      mounted() {
+      combinationTrend() {
+        const myData = (this.combinationOfSymptoms)
+        axios.get('/api-symptoms', {
+          params: myData,
+        }).then((res) => {
 
-      }
-    }).mount('#app')
-  </script>
+          console.log(res)
+          
+            this.comboChart?.destroy()
 
+          
+          const datasets = []
+          for (let i = 0; i < res.data.dataset.length; i++) {
 
-  <script>
-    const colorsArray = ['#6610f2', '#d63384']
-    // Gender Distribution Graph Config
-    const genderDistGraph = {
-      type: 'pie',
-      data: {
-        labels: ['Male', 'Female'],
-        datasets: [{
-          label: 'Gender Distribution of Patients',
-          data: [{{ charts.gender_dist.male | safe }}, {{ charts.gender_dist.female | safe }}],
-      backgroundColor: colorsArray,
-      hoverOffset: 4
-    }
-                  ]
-                },
-              };
-    // Diagnosis Monthly Graph Config
-    const diagFreqGraph = {
-      type: 'bar',
-      data: {
-        datasets: [{
-          data: {{ charts.diag_monthly.values | safe }},
-      backgroundColor: colorsArray,
-      label: 'Number of patients',
-    }],
-      labels: {{ charts.diag_monthly.keys| safe }}
-            },
-    options: {
-      responsive: true,
-        scales: {
-        x: {
-          title: {
-            display: true,
-              text: 'Month'
-          }
-        },
-        y: {
-          title: {
-            display: true,
-              text: 'Patients'
-          },
-          ticks: {
-            // forces step size to be 50 units
-            stepSize: 1
-          }
-        }
+            datasets.push({
+              label: res.data.dataset[i].label,
+              data: res.data.dataset[i].data,
+              borderColor: this.colorsArray[i % this.colorsArray.length],
+              //  backgroundColor: Utils.transparentize(borderColor, 0.5),
 
-      },
-    }
-            
+            })
+
           };
 
+          const comboChartConfig = {
 
-    // Age Breakdown Graph
-    const ageFreqGraph = {
-      type: 'bar',
-      data: {
-        datasets: [{
-          data: {{ charts.age.data | safe }},
-      backgroundColor: colorsArray,
-      label: 'Breakdown by Age',
-    }],
-      labels: {{ charts.age.labels| safe }}
+            type: 'line',
+            data: {
+              labels: res.data.label,
+              datasets: datasets
+            }
+
+          }
+
+
+          const ctx = document.getElementById('combo-chart').getContext('2d');
+          this.comboChart = new Chart(ctx, comboChartConfig);
+          // this.comboSymptoms.data.datasets.data = this.combinationResult.data
+          // this.comboSymptoms.data.labels = this.combinationResult.labels
+
+        })
+      },
+
+      genderDistributionGraph() {
+
+        axios.get('gender-dist').then(res => {
+          //console.log("in gender response ", res)
+          const genderDistGraph = {
+            type: 'pie',
+            data: {
+              labels: ['Male', 'Female'],
+              datasets: [
+                {
+                  label: 'Gender Distribution of Patients',
+                  data: [res.data.male_count, res.data.female_count],
+                  backgroundColor: this.colorsArray,
+                  hoverOffset: 4
+
+                }
+              ]
             },
-    options: {
-      responsive: true,
+
+          }
+          let genderPieCtx = document.getElementById('gender-dist').getContext('2d');
+          if (!this.genderDistGraph) {
+            this.genderDistGraph?.destroy()
+          }
+          this.genderDistGraph = new Chart(genderPieCtx, genderDistGraph);
+        })
+      },
+
+      monthlyDiagnosisGraph() {
+        axios.get('monthly').then(res => {
+
+          //console.log(res)
+          const diagFreqGraph = {
+            type: 'bar',
+            data: {
+              datasets: [{
+                data: res.data.values,
+                backgroundColor: this.colorsArray,
+                label: 'Number of patients',
+              }],
+              labels: res.data.keys
+            },
+            options: {
+              responsive: true,
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Month'
+                  }
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'Patients'
+                  },
+                  ticks: {
+                    // forces step size to be 50 units
+                    stepSize: 1
+                  }
+                }
+
+              },
+            }
+
+          };
+
+          let monthlyCtx = document.getElementById('diag-monthly').getContext('2d');
+          if (!this.monthlyDiagGraph) {
+            this.monthlyDiagGraph?.destroy()
+          }
+          this.monthlyDiagGraph = new Chart(monthlyCtx, diagFreqGraph);
+
+
+        })
+
+
+
+      },
+
+      ageDistributionGraph() {
+
+        axios.get('age-dist').then(res => {
+
+          //console.log(res)
+          const ageFreqGraph = {
+            type: 'bar',
+            data: {
+              datasets: [{
+                data: res.data.data,
+                backgroundColor: this.colorsArray,
+                label: 'Breakdown by Age',
+              }],
+              labels: res.data.labels
+            },
+            options: {
+              responsive: true,
             }
           };
 
-    // Top 5 Symptoms Graph
-    const mostFreqSymptoms = {
-      type: 'bar',
-      data: {
-        datasets: [{
-          data: {{ charts.freq_symptoms.data | safe }},
-      backgroundColor: colorsArray,
-      label: 'Num Of Diagnosis',
-    }],
-      labels: {{ charts.freq_symptoms.labels| safe }}
-            },
-    options: {
-      responsive: true,
-        scales: {
-        y: {
-          ticks: {
-            stepSize: 1
+          let ageCtx = document.getElementById('age-dist-graph').getContext('2d');
+          if (!this.ageGraph) {
+            this.ageGraph?.destroy();
           }
-        }
-      }
-    },
-            
+
+          this.ageGraph = new Chart(ageCtx, ageFreqGraph)
+
+        })
+
+
+      },
+
+      mostFrequent() {
+
+        axios.get('most-freq').then(res => {
+
+          //console.log(res);
+          // Top 5 Symptoms Graph
+          const mostFreqSymptoms = {
+            type: 'bar',
+            data: {
+              datasets: [{
+                data: res.data.data,
+                backgroundColor: this.colorsArray,
+                label: 'Num Of Diagnosis',
+              }],
+              labels: res.data.labels
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  ticks: {
+                    stepSize: 1
+                  }
+                }
+              }
+            },
+
           };
+
+          let mostFreqCtx = document.getElementById('freq-symptoms').getContext('2d');
+          if (!this.mostFreqGraph) {
+
+            this.mostFreqGraph?.destroy()
+
+          }
+
+          this.mostFreqGraph = new Chart(mostFreqCtx, mostFreqSymptoms)
+
+
+        })
+
+
+      },
+
+    },
+
+    created() {
+
+      console.log("in created")
+
+    },
+
+    mounted() {
+
+      console.log("in mounted")
+      console.log()
+      this.genderDistributionGraph()
+      this.ageDistributionGraph()
+      this.matchingSearch(this.searchText1)
+      this.matchingSearch2(this.searchText2)
+      this.matchingSearch3(this.searchText3)
+      this.matchingSearch4(this.searchText4)
+      this.monthlyDiagnosisGraph()
+      this.mostFrequent()
+
+    }
+  })
+</script>
+
+<!-- 
+  <script>
+
+
 
     // Combo Graph
 
@@ -555,19 +675,17 @@
 
 
     window.onload = function () {
-      let ctx = document.getElementById('diag-monthly').getContext('2d');
-      let ctx2 = document.getElementById('gender-dist').getContext('2d');
-      let ctx3 = document.getElementById('age-dist-graph').getContext('2d');
-      let ctx4 = document.getElementById('freq-symptoms').getContext('2d');
+      
+      
+      
       // let ctx5 = document.getElementById('combo-chart').getContext('2d');
 
       window.myPie = new Chart(ctx, diagFreqGraph);
-      window.myBar = new Chart(ctx2, genderDistGraph);
-      window.myAge = new Chart(ctx3, ageFreqGraph)
       window.myFreqSymptoms = new Chart(ctx4, mostFreqSymptoms)
       // window.myCombo = new Chart(ctx5, my_vue_app.comboSymptoms)
     };
 
 
-  </script>
-  {% endblock %}
+  </script> -->
+
+{% endblock %}

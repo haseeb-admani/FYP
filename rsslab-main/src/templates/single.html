@@ -1,0 +1,1522 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<div id="app">
+  <br></br>
+  <!----
+  <br>
+  <button class="btn btn-warning" @click="testButton()">Add New Graph</button>
+  <br> -->
+  <!-- <label for="start">Start Date</label>
+    <input type="date" v-model="filterDate.start" name="start">
+    <label for="end">End Date</label> -->
+  <!-- <input type="date" v-model="filterDate.end" name="end">
+    <button type="button" class="btn btn-primary" @click="applyFilter()">Filter</button> -->
+  <!-- ${filterDate} -->
+  <!-- <div class="row"> -->
+  <!-- <div class="col-6"> -->
+  <!-- <span class="badge bg-dark">Entries : ${entries.length}</span> -->
+  <!-- </div> -->
+  <!-- </div> -->
+  <!-- ${groupedMatches} -->
+
+  <!-- ${labels}
+  ${frequencyData} -->
+  <!-- ${entries} -->
+  <!-- {{all}} -->
+  <!-- <div> -->
+  <!-- <button class="btn btn-danger" @click="reloadPage()">Reload page</button> -->
+  <!-- <small>Reload page to search a different query</small> -->
+  <!-- <h3 class="mt-3">
+      <small style="margin: 0; font-size: 15px">RSS Name:</small>
+      {{rss.name|capfirst}}
+      <label for="exampleFormControlInput1" class="form-label">Email address</label>
+    </h3> -->
+
+  <!-- ${entireText} -->
+  <!-- <div class="row">
+      <div class="col-6">
+        <input type="text" class="form-control border border-dark border-2" placeholder="Search a string to populate graph" v-model="searchText">
+      </div> -->
+  <!-- <div class="col-3">
+        <button class="btn btn-warning" @click="matchingSearch()">First Trend</button>
+      </div>
+      <div class="col-3">
+        <button class="btn btn-success" @click="matchingSearch2()">Second Trend</button>
+      </div> -->
+  <!-- </div> -->
+  <!-- </div> -->
+  <!-- <div> -->
+  <!-- <div class="col-4">
+      <div v-if="noMatches">
+        <div class="alert alert-danger mt-2" role="alert">
+          No Matches Found!
+        </div>
+      </div> -->
+  <!-- <div v-if="noMatches2">
+        <div class="alert alert-danger mt-2" role="alert">
+          No Matches Found!
+        </div>
+      </div> -->
+  <!----  <div>
+    <div>
+      <h1 class="mt-3 bg-success p-1 text-white text-center">
+        Matches for ${searchText1} <br>
+          <small style="size: 15px; float:left;">Search Term:
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText1" style="width: 200px;">
+          </small>
+          <br>
+          <button class="btn btn-warning" @click="matchingSearch(searchText1)" style="float: left">Update Graph</button>
+        
+        <br>
+        <small style="font-size: 15px;">
+          Total matches: ${total}
+        </small>
+      </h1>
+      <canvas id="myChart" width="400" height="250"></canvas>
+    </div>
+    <div>
+      <h1 class="mt-3 bg-success p-1 text-white text-center">
+        Matches for ${searchText2} <br>
+          <small style="size: 15px; float:left;">Search Term:
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText2" style="width: 200px;">
+          </small>
+          <br>
+          <button class="btn btn-warning" @click="matchingSearch2(searchText2)" style="float: left">Update
+            Graph</button>
+        <br>
+        <small style="font-size: 15px;">
+          Total matches: ${total2}
+        </small>
+      </h1>
+      <canvas id="mySecondChart" width="400" height="250"></canvas>
+
+    </div>
+    <div >
+      <h1 class="mt-3 bg-success p-1 text-white text-center">
+        Matches for ${searchText3} <br>
+          <small style="size: 15px; float:left;">Search Term:
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText3" style="width: 200px;">
+          </small>
+          <br>
+          <button class="btn btn-warning" @click="matchingSearch3(searchText3)" style="float: left">Update
+            Graph</button>
+        <br>
+        <small style="font-size: 15px;">
+          Total matches: ${total3}
+        </small>
+      </h1>
+      <canvas id="myThirdChart" width="400" height="250"></canvas>
+    </div>
+    <div>
+      <h1 class="mt-3 bg-success p-1 text-white text-center">
+        Matches for ${searchText4} <br>
+          <small style="size: 15px; float:left;">Search Term:
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText4" style="width: 200px;">
+          </small>
+          <br>
+          <button class="btn btn-warning" @click="matchingSearch4(searchText4)" style="float: left">Update
+            Graph</button>
+        <br>
+        <small style="font-size: 15px;">
+          Total matches: ${total4}
+        </small>
+      </h1>
+      <canvas id="myFourthChart" width="400" height="1000"></canvas>
+    </div>
+
+  </div> -->
+  <!-- <div class="col-8">
+
+
+
+
+  </div> -->
+  <!-- ${labels} -->
+  <!-- </div> -->
+  <!-- <hr /> -->
+  <!-- <div class="row text-center">
+    <h3>Commonly Occuring Words</h3>
+    <div class="col-6">
+      <ul class="list-group" v-for="item in freqWords" :key="item.word">
+        <li class="list-group-item">${item.word.substring(1)}
+        ${item.count/freqWords[0].count}
+        <span class="badge bg-secondary">${item.count}  </span>
+        <div class="progress m-1">
+            <div class="progress-bar" role="progressbar" :style="{width: item.count/freqWords[0].count*100 + '%'}" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div> -->
+  <!-- <hr /> -->
+  <!-- <h3 class="text-center">Entries:</h3>
+  <p>
+    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+      Look at Entries
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      {% for entry in entries %}
+  {{entry}}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{entry.title}}
+        <span class="card-text badge bg-dark">{{entry.pub_date|time}}
+          {{entry.pub_date|date}}
+        </span>
+        <span class="card-text badge bg-dark">{{entry.pub_date|date}}</span>
+      </h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{entry.content|safe}}</h6>
+      <a href="#" class="card-link">Card link</a>
+      <a href="#" class="card-link">Another link</a>
+    </div>
+  </div>
+
+  
+
+  {% endfor %}
+    </div>
+  </div>-->
+
+  <!-- </div> -->
+
+  <div class="row">
+
+    <div class="col">
+
+      <div class="p-3 mb-2 bg-white text-dark">
+        <h4> Select a combination of symptoms to find their collective trend</h4>
+        <p>Selected combination is: ${combinationOfSymptoms} </p>
+
+        <input type="checkbox" id="fever" value="fever" v-model="combinationOfSymptoms">
+        <label for="fever">Fever</label>
+
+        <input type="checkbox" id="headache" value="headache" v-model="combinationOfSymptoms">
+        <label for="headache">Headache</label>
+
+        <input type="checkbox" id="nausea" value="nausea" v-model="combinationOfSymptoms">
+        <label for="nausea">Nausea</label>
+
+        <input type="checkbox" id="abdominalpain" value="abdominal pain" v-model="combinationOfSymptoms">
+        <label for="abdominalpain">Abdominal Pain</label>
+
+        <input type="checkbox" id="cough" value="cough" v-model="combinationOfSymptoms">
+        <label for="cough">Cough</label>
+
+        <input type="checkbox" id="palpitations" value="palpitations" v-model="combinationOfSymptoms">
+        <label for="palpitations">Palpitations</label>
+
+        <br>
+
+        <input type="checkbox" id="vomiting" value="vomiting" v-model="combinationOfSymptoms">
+        <label for="vomiting">Vomiting</label>
+
+        <input type="checkbox" id="sweating" value="sweating" v-model="combinationOfSymptoms">
+        <label for="sweating">Sweating</label>
+
+        <input type="checkbox" id="anxiety" value="anxiety" v-model="combinationOfSymptoms">
+        <label for="anxiety">Anxiety</label>
+
+        <input type="checkbox" id="irregularperiods" value="irregular periods" v-model="combinationOfSymptoms">
+        <label for="irregularperiods">Irregular periods</label>
+
+        <input type="checkbox" id="hypertension" value="hypertension" v-model="combinationOfSymptoms">
+        <label for="hypertension">Hypertension</label>
+
+        <br>
+
+        <input type="checkbox" id="chestpain" value="chest pain" v-model="combinationOfSymptoms">
+        <label for="chestpain">Chest pain</label>
+
+        <br><br>
+
+        <button type="button" class="btn btn-light" @click="combinationTrend()">Update Graph</button>
+
+        <canvas id="comboChart" width="1" height="1"></canvas>
+
+
+      </div>
+
+    </div>
+
+    <div class="col">
+      <canvas id="myClusterGraph" width="400" height="250"></canvas>
+    </div>
+
+
+
+  </div>
+
+
+  <div class="row">
+
+
+    <div class="col-sm-8">
+      <h2>
+        <p class="text-center"> Breakdown by number of diagnosis </p>
+      </h2>
+      <div class="p-3 mb-2 bg-white text-dark">
+        <canvas id="NumOfPatientsGraph" width="200" height="100"></canvas>
+      </div>
+    </div>
+
+    <div class="col-sm-4">
+      <h2>
+        <p class="text-center"> Breakdown by gender </p>
+      </h2>
+      <div class="p-3 mb-2 bg-white text-dark">
+        <canvas id="genderDistGraph" width="200" height="200"></canvas>
+      </div>
+    </div>
+
+
+  </div>
+
+  <br></br>
+
+  <div class="row">
+
+    <div class="col">
+      <h2>
+        <p class="text-center"> Breakdown by Age </p>
+      </h2>
+      <div class="p-3 mb-2 bg-white text-dark">
+        <canvas id="AgeDistGraph" width="400" height="250"></canvas>
+      </div>
+    </div>
+
+    <div class="col">
+
+      <h2>
+        <p class="text-center"> Top 5 Symptoms </p>
+      </h2>
+      <div class="p-3 mb-2 bg-white text-dark">
+        <canvas id="MostOccuringWordsGraph" width="400" height="250"></canvas>
+      </div>
+    </div>
+
+
+  </div>
+
+  <br></br>
+
+
+  <div class="row">
+
+    <div class="col">
+      <div class="p-3 mb-2 bg-white text-dark">
+
+        <h2 class="mt-3 p-1 text-center">
+          Matches for ${searchText1} <br><br>
+          <small style=size:10px;>Search new term: </small>
+
+          <div class="col offset-3">
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText1" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-warning" @click="matchingSearch(searchText1)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+            Total matches: ${total}
+          </small>
+        </h2>
+        <canvas id="myChart" width="400" height="250"></canvas>
+      </div>
+
+    </div>
+
+    <div class="col">
+      <div class="p-3 mb-2 bg-white text-dark">
+
+        <h2 class="mt-3 p-1 text-center">
+          Matches for ${searchText2} <br><br>
+          <small style=size:10px;>Search new term: </small>
+
+          <div class="col offset-3">
+            <input type="text" class="form-control border border-dark border-2"
+              placeholder="Search a string to populate graph" v-model.lazy="searchText2" style="width: 300px;">
+          </div>
+
+          <button class="btn btn-warning" @click="matchingSearch2(searchText2)">Update Graph</button>
+          <br>
+          <small style="font-size: 10px;">
+            Total matches: ${total2}
+          </small>
+        </h2>
+        <canvas id="mySecondChart" width="400" height="250"></canvas>
+      </div>
+
+    </div>
+
+    <br></br>
+
+    <div class="row">
+
+
+      <div class="col">
+        <div class="p-3 mb-2 bg-white text-dark">
+
+          <h2 class="mt-3 p-1 text-center">
+            Matches for ${searchText3} <br><br>
+            <small style=size:10px;>Search new term: </small>
+
+            <div class="col offset-3">
+              <input type="text" class="form-control border border-dark border-2"
+                placeholder="Search a string to populate graph" v-model.lazy="searchText3" style="width: 300px;">
+            </div>
+
+            <button class="btn btn-warning" @click="matchingSearch3(searchText3)">Update Graph</button>
+            <br>
+            <small style="font-size: 10px;">
+              Total matches: ${total3}
+            </small>
+          </h2>
+          <canvas id="myThirdChart" width="400" height="250"></canvas>
+        </div>
+
+      </div>
+
+
+      <div class="col">
+        <div class="p-3 mb-2 bg-white text-dark">
+
+          <h2 class="mt-3 p-1 text-center">
+            Matches for ${searchText4} <br><br>
+            <small style=size:10px;>Search new term: </small>
+
+            <div class="col offset-3">
+              <input type="text" class="form-control border border-dark border-2"
+                placeholder="Search a string to populate graph" v-model.lazy="searchText4" style="width: 300px;">
+            </div>
+
+            <button class="btn btn-warning" @click="matchingSearch4(searchText4)">Update Graph</button>
+            <br>
+            <small style="font-size: 10px;">
+              Total matches: ${total4}
+            </small>
+          </h2>
+          <canvas id="myFourthChart" width="400" height="250"></canvas>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
+      integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"
+      integrity="sha512-NMhzM2RHzbCRO0s5VPaRC+2bW6nmNXimzC9p5sp2x19M+zzuSJ2T50dEQ7hpHkNjnX1mt8nQg1NNthwRZgsoIg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+      integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+      integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+      var app = new Vue({
+        el: '#app',
+        delimiters: ['${', '}'],
+        data: {
+          entireText: '',
+          entries: [],
+          origEntries: [],
+          searchText1: 'Abdominal Pain',
+          searchText2: 'Headache',
+          searchText3: 'Fever',
+          searchText4: 'Cough',
+          entriesFrequency: [],
+          total: 0,
+          total2: 0,
+          total3: 0,
+          total4: 0,
+          groupedData: null,
+          groupedData2: null,
+          labels: [],
+          noMatches: false,
+          noMatches2: false,
+          // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          frequencyData: [],
+          myChart: null,
+          myChart2: null,
+          myChart3: null,
+          myChart4: null,
+          matchesDicts: [],
+          matchesDicts2: [],
+          matchesDicts3: [],
+          matchesDicts4: [],
+          groupedMatches: [],
+          groupedMatches2: [],
+          groupedMatches3: [],
+          groupedMatches4: [],
+          combinationOfSymptoms: [],
+          filterDate: {},
+          freqWords: [],
+          numOfGraphs: 0,
+          // frequencyData: [12, 19, 3, 5, 2, 3],
+        },
+        methods: {
+          applyFilter() {
+            // console.log(moment(this.filterDate.start))
+            // console.log(moment(this.filterDate.end))
+            console.log(this.origEntries)
+            let res = (this.origEntries.filter(entry => {
+              let time = new Date(entry.record_date)
+              let sd = new Date(this.filterDate.start)
+              let ed = new Date(this.filterDate.end)
+              console.log(time, sd, ed)
+              if (moment(time).isBetween(moment(sd), moment(ed))) {
+                return true
+              }
+              // if(sd < time && time < ed){
+              //   return true
+              // }
+              // return (sd < time && time < ed)
+              // return moment(entry.pub_date).isBetween(moment(this.filterDate.start), moment(this.filterDate.end))
+            }))
+            console.log("RES")
+            console.log(res)
+            this.entries = res
+            // console.log(this.entries)
+            // this.matchingSearch2()
+            // result = entries.filter(d => {var time = new Date(d.released_on).getTime();
+            //                      return (sd < time && time < ed);
+            //                     });
+            // console.log("Meow")
+          },
+          removeDay() {
+            // console.log(this.groupedMatches)
+          },
+          myLabels2() {
+            let labels = this.groupedMatches2.map(group => {
+              let text = (moment().dayOfYear(group[0])._d);
+              let newRes = JSON.stringify(text);
+              // console.log(newRes)
+              let result = newRes.slice(1, 11);
+              // console.log(result)
+              return result;
+
+            });
+            return labels;
+          },
+          myLabels() {
+            let labels = this.groupedMatches.map(group => {
+              let text = (moment().dayOfYear(group[0])._d);
+              let newRes = JSON.stringify(text);
+              // console.log(newRes)
+              let result = newRes.slice(1, 11);
+              // console.log(result)
+              return result;
+
+            });
+            // if(labels.length>0) {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            // let newRes = JSON.stringify(text);
+            // console.log(newRes)
+            // let result = newRes.slice(1, 11);
+            // console.log(result)
+            // }
+            // try {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            //   let newRes = JSON.stringify(text);
+            //   console.log(newRes)
+            //   // let result = newRes.slice(0, 10);
+
+            // } catch (error) {
+            //   console.log(error)
+            // }
+            // console.log(labels)
+            return labels;
+          },
+          myLabels3() {
+            let labels = this.groupedMatches3.map(group => {
+              let text = (moment().dayOfYear(group[0])._d);
+              let newRes = JSON.stringify(text);
+              // console.log(newRes)
+              let result = newRes.slice(1, 11);
+              // console.log(result)
+              return result;
+
+            });
+            // if(labels.length>0) {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            // let newRes = JSON.stringify(text);
+            // console.log(newRes)
+            // let result = newRes.slice(1, 11);
+            // console.log(result)
+            // }
+            // try {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            //   let newRes = JSON.stringify(text);
+            //   console.log(newRes)
+            //   // let result = newRes.slice(0, 10);
+
+            // } catch (error) {
+            //   console.log(error)
+            // }
+            // console.log(labels)
+            return labels;
+          },
+          myLabels4() {
+            let labels = this.groupedMatches4.map(group => {
+              let text = (moment().dayOfYear(group[0])._d);
+              let newRes = JSON.stringify(text);
+              // console.log(newRes)
+              let result = newRes.slice(1, 11);
+              // console.log(result)
+              return result;
+
+            });
+            // if(labels.length>0) {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            // let newRes = JSON.stringify(text);
+            // console.log(newRes)
+            // let result = newRes.slice(1, 11);
+            // console.log(result)
+            // }
+            // try {
+            //   let text = (moment().dayOfYear(labels[0])._d);
+            //   let newRes = JSON.stringify(text);
+            //   console.log(newRes)
+            //   // let result = newRes.slice(0, 10);
+
+            // } catch (error) {
+            //   console.log(error)
+            // }
+            // console.log(labels)
+            return labels;
+          },
+          myGraphData() {
+            let data = this.groupedMatches.map(group => group[1].length);
+            // console.log(data)
+            return data
+          },
+          myGraphData2() {
+            let data = this.groupedMatches2.map(group => group[1].length);
+            // console.log(data)
+            return data
+          }
+          ,
+          myGraphData3() {
+            let data = this.groupedMatches3.map(group => group[1].length);
+            // console.log(data)
+            return data
+          },
+          myGraphData4() {
+            let data = this.groupedMatches4.map(group => group[1].length);
+            // console.log(data)
+            return data
+          },
+          iGiveFreq() {
+            return this.frequencyData
+          },
+          createSecondGraph() {
+
+
+            const ctx = document.getElementById('mySecondChart').getContext('2d');
+            this.myChart2 = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: this.myLabels2(),
+                datasets: [{
+                  label: '# of occurrences of ' + this.searchText2,
+                  data: this.myGraphData2(),
+                  backgroundColor: [
+                    '#20c997',
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  lineTension: 0.5
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    display: true,
+                    beginAtZero: false,
+
+                    ticks: {
+                      stepSize: 10
+                    }
+                  }
+                },
+
+              }
+            });
+
+          },
+          createFourthGraph() {
+            const ctx = document.getElementById('myFourthChart').getContext('2d');
+            this.myChart4 = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: this.myLabels4(),
+                datasets: [{
+                  label: '# of occurrences of ' + this.searchText4,
+                  data: this.myGraphData4(),
+                  backgroundColor: [
+                    '#6DECE0',
+                  ],
+
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    display: true,
+                    beginAtZero: false,
+                    ticks: {
+                      stepSize: 10
+                    }
+                  }
+                },
+
+              }
+            });
+
+          },
+          createThirdGraph() {
+            const ctx = document.getElementById('myThirdChart').getContext('2d');
+            this.myChart3 = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: this.myLabels3(),
+                datasets: [{
+                  label: '# of occurrences of ' + this.searchText3,
+                  data: this.myGraphData3(),
+                  backgroundColor: [
+                    '#EC5A3B',
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  ////fill : true,
+                  lineTension: 0.5
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    display: true,
+                    beginAtZero: false,
+                    //stacked: true,
+                    ticks: {
+                      stepSize: 10
+                    }
+                  }
+                },
+
+              }
+            });
+            // myChart.destroy()
+          },
+          createGraph() {
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            this.myChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: this.myLabels(),
+                datasets: [{
+                  label: '# of occurrences ' + this.searchText1,
+                  data: this.myGraphData(),
+                  backgroundColor: [
+                    'rgba(54, 162, 235, 1)'
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  radius: 3,
+                  pointStyle: 'circle'
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    display: true,
+                    beginAtZero: false,
+                    ticks: {
+                      stepSize: 10
+                    }
+                  }
+
+                }
+
+              }
+            });
+            // myChart.destroy()
+          },
+
+
+
+          createNumOfPatientsGraph() {
+
+            let data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            this.entries.forEach(entry => {
+
+
+              let monthNumber = moment(entry.record_date, 'DD/MM/YYYY').format('M')
+              data[monthNumber - 1] = data[monthNumber - 1] + 1;
+
+            })
+            const ctx = document.getElementById('NumOfPatientsGraph').getContext('2d');
+            const myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                  label: 'Num Of Diagnosis',
+                  data: data,
+                  backgroundColor: [
+                    'rgba(255, 206, 86, 0.2)'
+                  ],
+                  borderColor: [
+                    'rgba(255, 206, 86, 1)',
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+
+
+
+          },
+
+
+          createGenderDistGraph() {
+
+            let maleCount = 0;
+            let femaleCount = 0;
+            let totalCount = 0;
+            this.entries.forEach(entry => {
+
+              if (entry.pn_history.includes("male") || entry.pn_history.includes("Male")) {
+
+                maleCount++;
+
+
+              }
+
+              if (entry.pn_history.includes("female") || entry.pn_history.includes("Female")) {
+
+                femaleCount++;
+
+
+              }
+
+
+            })
+
+            totalCount = maleCount + femaleCount;
+            malepercentage = (maleCount / totalCount) * 100;
+            femalepercentage = (femaleCount / totalCount) * 100;
+            console.log("Male percentage: ", (maleCount / totalCount) * 100);
+            console.log("Female percentage: ", (maleCount / totalCount) * 100);
+            const ctx = document.getElementById('genderDistGraph').getContext('2d');
+            const myChart = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                  label: 'Gender Distribution of Patients',
+                  data: [Math.round(malepercentage), Math.round(femalepercentage)],
+                  backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                  ],
+
+                  hoverOffset: 4
+                }
+                ]
+              },
+
+
+            });
+
+          },
+
+          createAgeDistGraph() {
+
+            const DATA_COUNT = 7;
+            const NUMBER_CFG = { count: DATA_COUNT, min: 0, max: 100 };
+            let ageData = [0, 0, 0, 0, 0, 0]
+            //console.log("ENTRY: ", this.entries[1]);
+            //console.log("INDEX: ", this.entries[1].pn_history.indexOf('yo'))
+            this.entries.forEach(entry => {
+
+              let number = parseInt(entry.pn_history[entry.pn_history.indexOf('yo') - 3] + entry.pn_history[entry.pn_history.indexOf('yo') - 2]) //=== NaN ? parseInt(entry.pn_history[entry.pn_history.indexOf('y.o')-3] + entry.pn_history[entry.pn_history.indexOf('y.o')-2]) === NaN ? parseInt(entry.pn_history[entry.pn_history.indexOf('y/o')-3] + entry.pn_history[entry.pn_history.indexOf('y/o')-2]) === NaN ? parseInt(entry.pn_history[entry.pn_history.indexOf('year-old')-3] + entry.pn_history[entry.pn_history.indexOf('year-old')-2]) === NaN ? parseInt(entry.pn_history[entry.pn_history.indexOf('year old')-3] + entry.pn_history[entry.pn_history.indexOf('year old')-2]) : 0 : 0 : 0 : 0;
+              console.log("NUMBER: ", number)
+              if (number < 6) { ageData[0]++ }
+              if (number >= 6 && number <= 13) { ageData[1]++ }
+              if (number >= 14 && number <= 21) { ageData[2]++ }
+              if (number >= 22 && number <= 35) { ageData[3]++ }
+              if (number >= 35 && number <= 49) { ageData[4]++ }
+              if (number >= 50) { ageData[5]++ }
+
+            })
+            const labels = ["0-5", "6-13", "14-21", "22-35", "35-49", "50+"]
+            const data = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Num of Diagnosis",
+                  data: ageData,
+                  borderColor: 'rgba(255, 99, 132, 0.2)',
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)'
+                },
+
+              ]
+            };
+
+            const ctx = document.getElementById('AgeDistGraph').getContext('2d');
+            const myChart = new Chart(ctx, {
+              type: 'bar',
+              data: data,
+              options: {
+                indexAxis: 'y',
+                // Elements options apply to all of the options unless overridden in a dataset
+                // In this case, we are setting the border of each horizontal bar to be 2px wide
+                elements: {
+                  bar: {
+                    borderWidth: 2,
+                  }
+                },
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'right',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Age Distribution Chart'
+                  }
+                }
+              },
+            });
+
+
+
+          },
+          combinationTrend() {
+
+
+            this.comboChart?.destroy();
+
+            let count = 0;
+
+            this.entries.forEach(element => {
+
+              if (this.combinationOfSymptoms.every(item => element.pn_history.includes(item))) {
+                count++
+              }
+
+
+            });
+            console.log("function run");
+            console.log(this.combinationOfSymptoms.join())
+            let label = this.combinationOfSymptoms.join(",");
+            console.log(label)
+            debugger;
+            const ctx = document.getElementById('comboChart').getContext('2d');
+            this.comboChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                label: this.combinationOfSymptoms,
+                datasets: [{
+                  barPercentage: 0.5,
+                  barThickness: 6,
+                  maxBarThickness: 8,
+                  minBarLength: 2,
+                  label: '# of occurrences of ' + this.combinationOfSymptoms,
+                  data: [count],
+                  backgroundColor: [
+                    '#20c997',
+                  ],
+                  borderColor: [
+
+                  ],
+                  borderWidth: 1,
+                  lineTension: 0.5
+                }]
+              },
+
+
+
+            });
+
+
+          },
+
+          createMostOccuringWordsGraph() {
+
+            let wordsList = [{ text: 'Abdominal Pain', count: 0 }, { text: 'Stomach Ache', count: 0 }, { text: 'Head ache', count: 0 }, { text: 'Dizziness', count: 0 }, { text: 'Fever', count: 0 }, { text: 'Cough', count: 0 }, { text: 'Palpitations', count: 0 }, { text: 'nausea', count: 0 }, { text: 'vomiting', count: 0 }, { text: 'anxiety', count: 0 }]
+            wordsList.forEach(word => {
+
+              this.entries.forEach(entry => {
+
+
+                if (entry.pn_history.includes(word.text)) {
+
+
+                  word.count = word.count + 1;
+
+
+                }
+
+
+              })
+
+
+            })
+
+
+            wordsList = wordsList.sort((a, b) => b.count - a.count);
+
+            wordsList = wordsList.slice(0, 5);
+
+            let labelList = wordsList.map(word => word.text);
+            let countList = wordsList.map(word => word.count);
+
+
+
+            const ctx = document.getElementById('MostOccuringWordsGraph').getContext('2d');
+            const myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: labelList,
+                datasets: [{
+                  label: 'Num Of Diagnosis',
+                  data: countList,
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+
+                  ],
+                  borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+
+
+
+          },
+
+
+          resetVars() {
+            // this.entries = []
+            // this.searchText = ''
+            // this.entriesFrequency = []
+            // this.total = 0
+            // this.groupedData = null
+            // this.labels = []
+            // this.frequencyData = []
+            // this.entries = this.origEntries
+          },
+          groupData3() {
+            this.labels = []
+            this.frequencyData = []
+            this.matchesDicts3 = []
+            // this.myChart = null
+            this.entries.forEach(entry => {
+              // console.log("Entry")
+              // console.log(entry)
+              let date = moment(entry.record_date).dayOfYear()
+              // moment().dayOfYear(Number);
+              // let date = (entry.pub_date)
+              // console.log(date)
+              // this.labels.push(date)
+              // console.log()
+              // this.frequencyData.push(entry.matches.length)
+              let newDict = {}
+              newDict.label = date
+              newDict.fullDate = entry.record_date
+              newDict.matches = entry.matches.length
+              // console.log(newDict)
+              this.matchesDicts3.push(newDict)
+            })
+
+
+            // console.log(this.matchesDicts)
+            let groupedMatches = d3.groups(this.matchesDicts3, d => d.matches)
+            let myMatches = _.slice(groupedMatches[1], [start = 1])
+            // console.log(myMatches)
+            myMatches = _.flatten(myMatches)
+            let finalMatches = d3.groups(myMatches, d => d.label).sort((a, b) => a[0] - b[0])
+            // console.log("Final Matches")
+            // console.log(finalMatches)
+            this.groupedMatches3 = finalMatches
+            this.myLabels3()
+            this.myGraphData3()
+            if (this.myChart3 === null) {
+              this.createThirdGraph()
+            } else {
+              this.myChart3.destroy()
+              this.createThirdGraph()
+            }
+
+          },
+          groupData4() {
+            this.labels = []
+            this.frequencyData = []
+            this.matchesDicts4 = []
+            // this.myChart = null
+            this.entries.forEach(entry => {
+              // console.log("Entry")
+              // console.log(entry)
+              let date = moment(entry.record_date).dayOfYear()
+              // moment().dayOfYear(Number);
+              // let date = (entry.pub_date)
+              // console.log(date)
+              // this.labels.push(date)
+              // console.log()
+              // this.frequencyData.push(entry.matches.length)
+              let newDict = {}
+              newDict.label = date
+              newDict.fullDate = entry.record_date
+              newDict.matches = entry.matches.length
+              // console.log(newDict)
+              this.matchesDicts4.push(newDict)
+            })
+
+
+            // console.log(this.matchesDicts)
+            let groupedMatches = d3.groups(this.matchesDicts4, d => d.matches)
+            let myMatches = _.slice(groupedMatches[1], [start = 1])
+            // console.log(myMatches)
+            myMatches = _.flatten(myMatches)
+            let finalMatches = d3.groups(myMatches, d => d.label).sort((a, b) => a[0] - b[0])
+            // console.log("Final Matches")
+            // console.log(finalMatches)
+            this.groupedMatches4 = finalMatches
+            this.myLabels4()
+            this.myGraphData4()
+            if (this.myChart4 === null) {
+              this.createFourthGraph()
+            } else {
+              this.myChart4.destroy()
+              this.createFourthGraph()
+            }
+
+          },
+          groupData2() {
+            this.labels = []
+            this.frequencyData = []
+            this.matchesDicts2 = []
+            // this.myChart = null
+            this.entries.forEach(entry => {
+              // console.log("Entry")
+              // console.log(entry)
+              let date = moment(entry.record_date).dayOfYear()
+              // moment().dayOfYear(Number);
+              // let date = (entry.pub_date)
+              // console.log(date)
+              // this.labels.push(date)
+              // console.log()
+              // this.frequencyData.push(entry.matches.length)
+              let newDict = {}
+              newDict.label = date
+              newDict.fullDate = entry.record_date
+              newDict.matches = entry.matches.length
+              // console.log(newDict)
+              this.matchesDicts2.push(newDict)
+            })
+
+
+            // console.log(this.matchesDicts)
+            let groupedMatches = d3.groups(this.matchesDicts2, d => d.matches)
+            let myMatches = _.slice(groupedMatches[1], [start = 1])
+            // console.log(myMatches)
+            myMatches = _.flatten(myMatches)
+            let finalMatches = d3.groups(myMatches, d => d.label).sort((a, b) => a[0] - b[0])
+            // console.log("Final Matches")
+            // console.log(finalMatches)
+            this.groupedMatches2 = finalMatches
+            this.myLabels2()
+            this.myGraphData2()
+            if (this.myChart2 === null) {
+              this.createSecondGraph()
+            } else {
+              this.myChart2.destroy()
+              this.createSecondGraph()
+            }
+
+          },
+          groupData() {
+            this.labels = []
+            this.frequencyData = []
+            this.matchesDicts = []
+            this.matches = []
+            // this.myChart = null
+            this.entries.forEach(entry => {
+              // console.log("Entry")
+              // console.log(entry)
+              let date = moment(entry.record_date).dayOfYear()
+              //debugger
+              // moment().dayOfYear(Number);
+              // let date = (entry.pub_date)
+              // console.log(date)
+              this.labels.push(date)
+              // console.log()
+              this.frequencyData.push(entry.matches.length)
+              let newDict = {}
+              newDict.label = date
+              newDict.fullDate = entry.record_date
+              newDict.matches = entry.matches.length
+              // console.log(newDict)
+              this.matchesDicts.push(newDict)
+            })
+
+
+            // console.log(this.matchesDicts)
+            let groupedMatches = d3.groups(this.matchesDicts, d => d.matches)
+            let myMatches = _.slice(groupedMatches[1], [start = 1])
+            // console.log(myMatches)
+            myMatches = _.flatten(myMatches)
+            let finalMatches = d3.groups(myMatches, d => d.label).sort((a, b) => a[0] - b[0])
+            // console.log("Final Matches")
+            // console.log(finalMatches)
+            this.groupedMatches = finalMatches
+            this.myLabels()
+            this.myGraphData()
+            if (this.myChart === null) {
+              this.createGraph()
+            } else {
+              this.myChart.destroy()
+              this.createGraph()
+            }
+
+          }, testButton() {
+            console.log("TestOftheButton")
+            this.numOfGraphs += 1;
+            console.log(this.numOfGraphs);
+          },
+          aggregateMatches() {
+            this.total = 0;
+            this.entries.forEach(entry => {
+              if (entry.matches) {
+                this.total += entry.matches.length
+                // console.log("meow")
+              }
+            })
+            if (this.total === 0) {
+              this.noMatches = true;
+              setTimeout(() => {
+                this.noMatches = false;
+              }, 3000);
+            }
+            // return total;
+          },
+          aggregateMatches3() {
+            this.total3 = 0;
+            this.entries.forEach(entry => {
+              if (entry.matches) {
+                this.total3 += entry.matches.length
+                // console.log("meow")
+              }
+            })
+            if (this.total3 === 0) {
+              this.noMatches = true;
+              setTimeout(() => {
+                this.noMatches = false;
+              }, 3000);
+            }
+            // return total;
+          },
+          aggregateMatches4() {
+            this.total4 = 0;
+            this.entries.forEach(entry => {
+              if (entry.matches) {
+                this.total4 += entry.matches.length
+                // console.log("meow")
+              }
+            })
+            if (this.total4 === 0) {
+              this.noMatches = true;
+              setTimeout(() => {
+                this.noMatches = false;
+              }, 3000);
+            }
+            // return total;
+          },
+          aggregateMatches2() {
+            this.total2 = 0;
+            this.entries.forEach(entry => {
+              if (entry.matches) {
+                this.total2 += entry.matches.length
+                // console.log("meow")
+              }
+            })
+            if (this.total2 === 0) {
+              this.noMatches2 = true;
+              setTimeout(() => {
+                this.noMatches2 = false;
+              }, 3000);
+            }
+            // return total;
+          },
+          reloadPage() {
+            location.reload()
+          },
+          matchingSearch(searchString) {
+            this.entries.forEach(entry => {
+              entry.matches = []
+            })
+            this.groupData()
+
+            // this.resetVars()
+            // this.total = 0;
+            let regex;
+
+            regex = new RegExp(searchString, 'i');
+            console.log(regex)
+            this.entries.forEach(entry => {
+              // console.log(entry)
+              // console.log(entry.pn_history)
+              if (entry.pn_history.match(regex) !== null) {
+                entry.matches.push(entry.pn_history.match(regex))
+                // entry.matches = (entry.content.matchAll(regex))
+              }
+              // console.log(entry.content.match(regex))
+              // entry.matches += entry.content.match(regex)
+              // entry.matches 
+              // console.log(entry.content.match(regex).length)
+              // console.log(entry)
+              // this.entriesFrequency.push(entry.content.match(regex).length)
+              // console.log(this.entriesFrequency)
+              // return this.entriesFrequency
+            })
+            // console.log(regex)
+
+            //.length
+            // }
+            this.aggregateMatches()
+            this.groupData()
+          },
+          matchingSearch4(searchString) {
+            this.entries.forEach(entry => {
+              entry.matches = []
+            })
+            this.groupData4()
+
+            // this.resetVars()
+            // this.total = 0;
+            let regex;
+
+            regex = new RegExp(searchString, 'i');
+            // console.log(regex)
+            this.entries.forEach(entry => {
+              // console.log(entry)
+              // console.log(entry.content)
+              if (entry.pn_history.match(regex) !== null) {
+                entry.matches.push(entry.pn_history.match(regex))
+                // entry.matches = (entry.content.matchAll(regex))
+              }
+              // console.log(entry.content.match(regex))
+              // entry.matches += entry.content.match(regex)
+              // entry.matches 
+              // console.log(entry.content.match(regex).length)
+              // console.log(entry)
+              // this.entriesFrequency.push(entry.content.match(regex).length)
+              // console.log(this.entriesFrequency)
+              // return this.entriesFrequency
+            })
+            // console.log(regex)
+
+            //.length
+            // }
+            this.aggregateMatches4()
+            this.groupData4()
+          },
+          matchingSearch3(searchString) {
+            this.entries.forEach(entry => {
+              entry.matches = []
+            })
+            this.groupData3()
+
+            // this.resetVars()
+            // this.total = 0;
+            let regex;
+
+            regex = new RegExp(searchString, 'i');
+            // console.log(regex)
+            this.entries.forEach(entry => {
+              // console.log(entry)
+              // console.log(entry.content)
+              if (entry.pn_history.match(regex) !== null) {
+                entry.matches.push(entry.pn_history.match(regex))
+                // entry.matches = (entry.content.matchAll(regex))
+              }
+              // console.log(entry.content.match(regex))
+              // entry.matches += entry.content.match(regex)
+              // entry.matches 
+              // console.log(entry.content.match(regex).length)
+              // console.log(entry)
+              // this.entriesFrequency.push(entry.content.match(regex).length)
+              // console.log(this.entriesFrequency)
+              // return this.entriesFrequency
+            })
+            // console.log(regex)
+
+            //.length
+            // }
+            this.aggregateMatches3()
+            this.groupData3()
+          },
+          matchingSearch2(searchString) {
+            this.entries.forEach(entry => {
+              entry.matches = []
+            })
+            this.groupData2()
+
+            // this.resetVars()
+            // this.total = 0;
+            let regex;
+
+            regex = new RegExp(searchString, 'i');
+            // console.log(regex)
+            this.entries.forEach(entry => {
+              // console.log(entry)
+              // console.log(entry.content)
+              if (entry.pn_history.match(regex) !== null) {
+                entry.matches.push(entry.pn_history.match(regex))
+                // entry.matches = (entry.content.matchAll(regex))
+              }
+              // console.log(entry.content.match(regex))
+              // entry.matches += entry.content.match(regex)
+              // entry.matches 
+              // console.log(entry.content.match(regex).length)
+              // console.log(entry)
+              // this.entriesFrequency.push(entry.content.match(regex).length)
+              // console.log(this.entriesFrequency)
+              // return this.entriesFrequency
+            })
+            // console.log(regex)
+
+            //.length
+            // }
+            this.aggregateMatches2()
+            this.groupData2()
+          }
+        },
+
+        computed: {
+
+        },
+        created() {
+          axios.get('/api/entries/{{rss.id}}')
+            .then((response) => {
+              // handle success
+              console.log(response);
+
+              this.entries = response.data
+              this.entries.forEach(entry => {
+                entry.matches = []
+              })
+              this.origEntries = this.entries;
+              this.entries.forEach(entry => {
+                this.entireText += ` ${entry.pn_history}`
+                // console.log(entry)
+              })
+              let wordCounts = {};
+              let words = this.entireText.split(' ');
+
+              for (let i = 0; i < words.length; i++) {
+                wordCounts["_" + words[i]] = (wordCounts["_" + words[i]] || 0) + 1;
+              }
+              let wordCountsArray = []
+              for (const [key, value] of Object.entries(wordCounts)) {
+                wordCountsArray.push({ word: key, count: value })
+              }
+              let removeTheseWords = ['_the', '_a', '_to', '_of', '_and', '_in', '_The', '_for', '_on', '_are', '_at']
+              wordCountsArray = wordCountsArray.filter(word => !removeTheseWords.includes(word.word))
+              // console.log(wordCountsArray)
+              wordCountsArray.sort((a, b) => b.count - a.count)
+              frequentlyOccurringWords = wordCountsArray.slice(0, 10)
+              this.freqWords = frequentlyOccurringWords
+              this.matchingSearch(this.searchText1);
+              this.matchingSearch2(this.searchText2);
+              this.matchingSearch3(this.searchText3);
+              this.matchingSearch4(this.searchText4);
+              this.createNumOfPatientsGraph();
+              this.createGenderDistGraph();
+              this.createAgeDistGraph();
+              this.createMostOccuringWordsGraph();
+              // console.log(frequentlyOccurringWords)
+              // console.log(wordCounts)
+
+            })
+            .catch((error) => {
+              // handle error
+              console.log(error);
+            })
+
+        },
+        mounted() {
+        }
+      })
+// groupedMatches.forEach(el=>{
+        //   console.log(el)
+        //   console.log(_.slice(el,[start=1], [end=el.length]))
+        //   // console.log(typeof el)
+        // })
+        // let matchesArray = groupedMatches[1]
+
+        // let groupedMatches = Array.from(d3.group(this.matchesDicts, d=>d.matches))[1]
+        // groupedMatches = (groupedMatches[1])
+        // this.showGraph = true;
+        // this.groupedData = d3.group(this.entries, d => d.pub_date)
+        // console.log(this.groupedData)
+    </script>
+
+    {% endblock %}
