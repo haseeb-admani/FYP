@@ -119,16 +119,18 @@ def filtered_patients_data(request):
 
 @api_view(['GET'])
 def gender_dist_graph(request):
-    all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
-    male_count = 0
-    female_count = 0
-    for note in all_notes:
-        # print(note)
-        if "male" in note['history'].lower():
-            male_count += 1
+    db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') as male_count,(select count(*) from reports_patientnotes where history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') as female_count from reports_patientnotes limit 1")[0]
+    # print("DB RESPONSE = ", db_response.female_count)
+    # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    male_count = db_response.male_count
+    female_count = db_response.female_count
+    # for note in all_notes:
+    #     # print(note)
+    #     if "male" in note['history'].lower():
+    #         male_count += 1
 
-        if "female" in note['history'].lower():
-            female_count += 1
+    #     if "female" in note['history'].lower():
+    #         female_count += 1
 
     gender_dist = {
         'male_count': male_count,
