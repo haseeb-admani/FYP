@@ -149,6 +149,7 @@ def monthly_diagnosis_graph(request):
     
     all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substring(record_date, 6,2) as month from reports_patientnotes group by substring(record_date, 6,2)")
 
+
     # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
     # df = pd.DataFrame(all_notes)
     # df.record_date = pd.to_datetime(df.record_date)
