@@ -17,7 +17,7 @@ def search_records(request):
     print("query params=  ", request.query_params)
     my_q = request.query_params['query']
     
-    my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substring(record_date, 6 , 2) as month from reports_patientnotes where history like '%abdominal pain%' group by substring(record_date, 6 , 2)")
+    my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%abdominal pain%' group by substr(record_date, 6 , 2)")
     # my_notes = my_notes.filter(
     #     history__icontains=my_q)
     # # print(len(my_notes))
@@ -147,7 +147,7 @@ def gender_dist_graph(request):
 @api_view(['GET'])
 def monthly_diagnosis_graph(request):
     
-    all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substring(record_date, 6,2) as month from reports_patientnotes group by substring(record_date, 6,2)")
+    all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes group by substr(record_date, 6,2)")
 
 
     # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
