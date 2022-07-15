@@ -17,28 +17,33 @@ def search_records(request):
     print("query params=  ", request.query_params)
     my_q = request.query_params['query']
     
-    my_notes = PatientNotes.objects.values('id', 'record_date', 'history')
-    my_notes = my_notes.filter(
-        history__icontains=my_q)
-    # print(len(my_notes))
-    # print(my_q)
+    my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substring(record_date, 6 , 2) as month from reports_patientnotes where history like '%abdominal pain%' group by substring(record_date, 6 , 2)")
+    # my_notes = my_notes.filter(
+    #     history__icontains=my_q)
+    # # print(len(my_notes))
+    # # print(my_q)
     if len(my_notes) > 0:
-        # print(my_notes)
-        notes = list(my_notes)
-        # print(notes)
-        df = pd.DataFrame(notes)
-        df.record_date = pd.to_datetime(df.record_date)
-        dg = df.groupby(pd.Grouper(key='record_date', freq='M')).count()
-        dg.index = dg.index.strftime('%B')
-        diag_monthly = dg.to_dict()
-        diag_monthly = diag_monthly['id']
-        # print(diag_monthly)
+    #     # print(my_notes)
+    #     notes = list(my_notes)
+    #     # print(notes)
+    #     df = pd.DataFrame(notes)
+    #     df.record_date = pd.to_datetime(df.record_date)
+    #     dg = df.groupby(pd.Grouper(key='record_date', freq='M')).count()
+    #     dg.index = dg.index.strftime('%B')
+    #     diag_monthly = dg.to_dict()
+    #     diag_monthly = diag_monthly['id']
+    #     # print(diag_monthly)
         months = ['January', 'February', 'March', 'April', 'May', 'June',
                   'July', 'August', 'September', 'October', 'November', 'December']
         diag_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        for my_key in diag_monthly.keys():
-            index_of_month = months.index(my_key)
-            diag_per_month[index_of_month] = diag_monthly[my_key]
+        # for my_key in diag_monthly.keys():
+        #     index_of_month = months.index(my_key)
+        #     diag_per_month[index_of_month] = diag_monthly[my_key]
+
+        for note in my_notes:
+            index_of_month = int(note.month)
+            diag_per_month[index_of_month] = note.month_count
+
         my_chart = {
             'label': months,
             'data': diag_per_month
@@ -141,20 +146,32 @@ def gender_dist_graph(request):
 
 @api_view(['GET'])
 def monthly_diagnosis_graph(request):
-    all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
-    df = pd.DataFrame(all_notes)
-    df.record_date = pd.to_datetime(df.record_date)
-    dg = df.groupby(pd.Grouper(key='record_date', freq='1M')).count()
-    dg.index = dg.index.strftime('%B')
-    diag_monthly = dg.to_dict()
-    diag_monthly = diag_monthly['id']
+    
+    all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substring(record_date, 6,2) as month from reports_patientnotes group by substring(record_date, 6,2)")
+
+    # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    # df = pd.DataFrame(all_notes)
+    # df.record_date = pd.to_datetime(df.record_date)
+    # dg = df.groupby(pd.Grouper(key='record_date', freq='1M')).count()
+    # dg.index = dg.index.strftime('%B')
+    # diag_monthly = dg.to_dict()
+    # diag_monthly = diag_monthly['id']
     # print(diag_monthly)
     months = ['January', 'February', 'March', 'April', 'May', 'June',
               'July', 'August', 'September', 'October', 'November', 'December']
+
     diag_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    for my_key in diag_monthly.keys():
-        index_of_month = months.index(my_key)
-        diag_per_month[index_of_month] = diag_monthly[my_key]
+
+    for note in all_notes:
+        index_of_month = int(note.month)
+        print(index_of_month, note.month_count)
+        diag_per_month[index_of_month-1] = note.month_count
+
+
+    
+    # for my_key in diag_monthly.keys():
+    #     index_of_month = months.index(my_key)
+    #     diag_per_month[index_of_month] = diag_monthly[my_key]
 
     monthlydist = {
         'keys': months,
@@ -215,15 +232,21 @@ def age_dist(request):
 @api_view(['GET'])
 def most_freq(request):
 
-    all_notes = PatientNotes.objects.values('id', 'record_date', 'history') 
-    words_list = [{"text": 'Abdominal Pain', "count": 0}, {"text": 'Stomach Ache', "count": 0}, {"text": 'Head ache', "count": 0}, {"text": 'Dizziness', "count": 0}, {"text": 'Fever', "count": 0}, {
+    # all_notes = PatientNotes.objects.values('id', 'record_date', 'history') 
+    words_list = [{"text": 'Abdominal Pain', "count": 0}, {"text": 'Stomach Ache', "count": 0}, {"text": 'Headache', "count": 0}, {"text": 'Dizziness', "count": 0}, {"text": 'Fever', "count": 0}, {
         "text": 'Cough', "count": 0}, {"text": 'Palpitations', "count": 0}, {"text": 'nausea', "count": 0}, {"text": 'vomiting', "count": 0}, {"text": 'anxiety', "count": 0}]
     
-    for word in words_list:
-        for note in all_notes:
-            if word["text"].lower() in note['history'].lower():
-                word["count"] += 1
+    # for word in words_list:
+    #     for note in all_notes:
+    #         if word["text"].lower() in note['history'].lower():
+    #             word["count"] += 1
     
+
+    for word in words_list:
+        count_notes = PatientNotes.objects.raw("select id, count(*) as counts from reports_patientnotes where lower(history) like '%{0}%'".format(word["text"].lower()))[0]
+        # print("NOTES = ", count_notes)
+        word["count"] = count_notes.counts
+
     sorted_words = sorted(words_list, key=lambda d: d['count'], reverse=True)
     top5 = sorted_words[:5]
     

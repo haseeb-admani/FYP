@@ -515,7 +515,7 @@
       monthlyDiagnosisGraph() {
         axios.get('monthly').then(res => {
 
-          //console.log(res)
+          console.log("monthly ", res)
           const diagFreqGraph = {
             type: 'bar',
             data: {
