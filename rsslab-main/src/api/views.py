@@ -42,7 +42,7 @@ def search_records(request):
 
         for note in my_notes:
             index_of_month = int(note.month)
-            diag_per_month[index_of_month] = note.month_count
+            diag_per_month[index_of_month-1] = note.month_count
 
         my_chart = {
             'label': months,
