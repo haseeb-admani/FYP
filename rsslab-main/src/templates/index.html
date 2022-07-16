@@ -4,6 +4,21 @@
 
 <!-- <script src="https://unpkg.com/vue@3"></script> -->
 <div id="app" class="row mt-4">
+  <div class="row">
+
+    <div class="col-sm-6">
+
+      
+
+        Start Date <input type="date" id="startdate"> &nbsp; &nbsp; &nbsp;
+        End Date <input type="date" id="enddate"> &nbsp; &nbsp; &nbsp;
+        <button @click="setDateFilter()">Update</button>
+
+      
+
+    </div>
+  </div>
+
   <div class=" p-3">
     <h6> Total Number of records are: {{notes}} </h6>
     <hr />
@@ -35,6 +50,9 @@
         <h3>
           <p class="text-center"> Breakdown by Age </p>
         </h3>
+        <div class="row">
+
+        </div>
         <canvas class="border border-dark p-3 shadow" id="age-dist-graph"></canvas>
       </div>
 
@@ -43,6 +61,34 @@
         <h3>
           <p class="text-center"> Top 5 Symptoms </p>
         </h3>
+        <div>
+          <div class="dropdown">
+            <button @click="myDropDownFunction()" class="dropbtn">Gender</button>
+            <div id="myDropdown" class="dropdown-content">
+              <button type="button" @click="setGenderFilter('default')">Default</button> <br>
+              <button type="button" @click="setGenderFilter('male')">Male</button> <br>
+              <button type="button" @click="setGenderFilter('female')">Female</button> <br>
+              <!-- <button type="button" @click="myTestFunction()">Uncategorized</button> <br> -->
+
+            </div>
+          </div>
+
+
+          <!-- <div class="dropdown">
+            <button @click="myDropDownFunction2()" class="dropbtn">Age</button>
+            <div id="myDropdown2" class="dropdown-content">
+              <button type="button" @click="setAgeFilter('default')">Default</button> <br>
+              <button type="button" @click="setAgeFilter('0-12')">0-12</button> <br>
+              <button type="button" @click="setAgeFilter('13-19')">13-19</button> <br>
+              <button type="button" @click="setAgeFilter('20-28')">20-28</button> <br>
+              <button type="button" @click="setAgeFilter('29-40')">29-40</button> <br>
+              <button type="button" @click="setAgeFilter('40+')">40+</button> <br>
+              <button type="button" @click="setAgeFilter()">Uncategorized</button> <br>
+
+
+            </div>
+          </div> -->
+        </div>
         <canvas class="border border-dark p-3 shadow" id="freq-symptoms"></canvas>
       </div>
     </div>
@@ -262,6 +308,12 @@
         label: [],
         data: []
       },
+      dateFilter:{
+        startDate:'',
+        endDate:''
+      },
+      ageFilter: 'default',
+      genderFilter: 'default',
       comboChart: null,
       searchText1: '',
       searchChart1: null,
@@ -296,12 +348,41 @@
 
     },
     methods: {
+      myDropDownFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+      },
+
+      myDropDownFunction2() {
+        document.getElementById("myDropdown2").classList.toggle("show");
+      },
+
+      setAgeFilter(filter) {
+        this.ageFilter = filter
+      },
+      setGenderFilter(filter) {
+        this.genderFilter = filter;
+        this.mostFrequent()
+      },
+      setDateFilter(){
+        this.dateFilter.startDate = document.getElementById('startdate').value
+        this.dateFilter.endDate = document.getElementById('enddate').value
+        this.genderDistributionGraph()
+        this.ageDistributionGraph()
+        this.matchingSearch(this.searchText1)
+        this.matchingSearch2(this.searchText2)
+        this.matchingSearch3(this.searchText3)
+        this.matchingSearch4(this.searchText4)
+        this.monthlyDiagnosisGraph()
+        this.mostFrequent()
+      },
       matchingSearch4(searchText) {
         this.searchText4 = searchText;
         if (searchText !== '') {
           axios.get('/api-search', {
             params: {
-              query: searchText
+              query: searchText,
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
             }
           }).then((res) => {
             this.searchRes4 = res.data
@@ -337,7 +418,9 @@
         if (searchText !== '') {
           axios.get('/api-search', {
             params: {
-              query: searchText
+              query: searchText,
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
             }
           }).then((res) => {
             this.searchRes3 = res.data
@@ -373,7 +456,9 @@
         if (searchText !== '') {
           axios.get('/api-search', {
             params: {
-              query: searchText
+              query: searchText,
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
             }
           }).then((res) => {
             this.searchRes2 = res.data
@@ -410,7 +495,9 @@
         if (searchText !== '') {
           axios.get('/api-search', {
             params: {
-              query: searchText
+              query: searchText,
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
             }
           }).then((res) => {
             this.searchRes1 = res.data
@@ -442,16 +529,20 @@
         // api-search
       },
       combinationTrend() {
-        const myData = (this.combinationOfSymptoms)
+        const myData = this.combinationOfSymptoms
         axios.get('/api-symptoms', {
-          params: myData,
+          params: {
+              keys: myData,
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
+          }
         }).then((res) => {
 
           console.log(res)
-          
-            this.comboChart?.destroy()
 
-          
+          this.comboChart?.destroy()
+
+
           const datasets = []
           for (let i = 0; i < res.data.dataset.length; i++) {
 
@@ -486,7 +577,12 @@
 
       genderDistributionGraph() {
 
-        axios.get('gender-dist').then(res => {
+        axios.get('gender-dist', {
+            params: {
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
+            }
+        }).then(res => {
           //console.log("in gender response ", res)
           const genderDistGraph = {
             type: 'pie',
@@ -504,6 +600,7 @@
             },
 
           }
+          this.genderDistGraph?.destroy()
           let genderPieCtx = document.getElementById('gender-dist').getContext('2d');
           if (!this.genderDistGraph) {
             this.genderDistGraph?.destroy()
@@ -513,7 +610,12 @@
       },
 
       monthlyDiagnosisGraph() {
-        axios.get('monthly').then(res => {
+        axios.get('monthly', {
+            params: {
+              startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
+            }
+        }).then(res => {
 
           console.log("monthly ", res)
           const diagFreqGraph = {
@@ -551,6 +653,7 @@
 
           };
 
+          this.monthlyDiagGraph?.destroy()
           let monthlyCtx = document.getElementById('diag-monthly').getContext('2d');
           if (!this.monthlyDiagGraph) {
             this.monthlyDiagGraph?.destroy()
@@ -566,7 +669,12 @@
 
       ageDistributionGraph() {
 
-        axios.get('age-dist').then(res => {
+        axios.get('age-dist', {
+          params: {
+            startDate: this.dateFilter.startDate,
+              endDate: this.dateFilter.endDate
+          }
+        }).then(res => {
 
           //console.log(res)
           const ageFreqGraph = {
@@ -584,6 +692,7 @@
             }
           };
 
+          this.ageGraph?.destroy();
           let ageCtx = document.getElementById('age-dist-graph').getContext('2d');
           if (!this.ageGraph) {
             this.ageGraph?.destroy();
@@ -598,7 +707,14 @@
 
       mostFrequent() {
 
-        axios.get('most-freq').then(res => {
+        axios.get('most-freq', {
+          params: {
+            ageFilter: this.ageFilter,
+            genderFilter: this.genderFilter,
+            startDate: this.dateFilter.startDate,
+            endDate: this.dateFilter.endDate
+          }
+        }).then(res => {
 
           //console.log(res);
           // Top 5 Symptoms Graph
@@ -625,6 +741,7 @@
 
           };
 
+          this.mostFreqGraph?.destroy()
           let mostFreqCtx = document.getElementById('freq-symptoms').getContext('2d');
           if (!this.mostFreqGraph) {
 

@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from reports.models import PatientNotes
+from datetime import datetime
 
 import pandas as pd
 
@@ -17,7 +18,26 @@ def search_records(request):
     print("query params=  ", request.query_params)
     my_q = request.query_params['query']
     
-    my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%abdominal pain%' group by substr(record_date, 6 , 2)")
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
+
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        # query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
+        my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%{0}%' and record_date >= '{1}' and record_date <= '{2}' group by substr(record_date, 6 , 2)".format(my_q, startDate, endDate))
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date >= '{0}'".format(startDate)
+        my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%{0}%' and record_date >= '{1}' group by substr(record_date, 6 , 2)".format(my_q, startDate))
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date <= '{0}'".format(endDate)
+        my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%{0}%' and record_date <= '{1}' group by substr(record_date, 6 , 2)".format(my_q,endDate))
+    else:
+        my_notes = PatientNotes.objects.raw("select id, count(record_date) as month_count, substr(record_date, 6 , 2) as month from reports_patientnotes where history like '%{0}%' group by substr(record_date, 6 , 2)".format(my_q))
+    
     # my_notes = my_notes.filter(
     #     history__icontains=my_q)
     # # print(len(my_notes))
@@ -78,9 +98,31 @@ def basicdash(request):
 
 @api_view(['GET'])
 def filtered_patients_data(request):
-    filter_by = list(request.query_params.dict().values())
+    print("FILTER BY ",request.GET.getlist('keys[]'))
+    filter_by = request.GET.getlist('keys[]')
+    print("FILTER BY ",filter_by)
     response_list = []
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
     my_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    print("DATE FILTER ", startDate)
+    query = "select * from reports_patientnotes"
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        # query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
+        my_notes = my_notes.filter(record_date__gte=startDate, record_date__lte=endDate)
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date >= '{0}'".format(startDate)
+        my_notes = my_notes.filter(record_date__gte=startDate)
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date <= '{0}'".format(endDate)
+        my_notes = my_notes.filter(record_date__lte=endDate)
+
+    # my_notes = PatientNotes.objects.values('id', 'record_date', 'history')
     my_chart = {}
     months = ['January', 'February', 'March', 'April', 'May', 'June',
                   'July', 'August', 'September', 'October', 'November', 'December']
@@ -124,7 +166,25 @@ def filtered_patients_data(request):
 
 @api_view(['GET'])
 def gender_dist_graph(request):
-    db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') as male_count,(select count(*) from reports_patientnotes where history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') as female_count from reports_patientnotes limit 1")[0]
+
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        # query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
+        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date >= '{0}' and record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' and record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(startDate, endDate))[0]
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date >= '{0}'".format(startDate)
+        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date >= '{0}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' )) as female_count from reports_patientnotes limit 1".format(startDate))[0]
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date <= '{0}'".format(endDate)
+        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(endDate))[0]
+    else:
+        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') as male_count,(select count(*) from reports_patientnotes where history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') as female_count from reports_patientnotes limit 1")[0]
     # print("DB RESPONSE = ", db_response.female_count)
     # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
     male_count = db_response.male_count
@@ -147,7 +207,24 @@ def gender_dist_graph(request):
 @api_view(['GET'])
 def monthly_diagnosis_graph(request):
     
-    all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes group by substr(record_date, 6,2)")
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        # query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
+        all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes where record_date >= '{0}' and record_date <= '{1}' group by substr(record_date, 6,2)".format(startDate, endDate))
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date >= '{0}'".format(startDate)
+        all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes where record_date >= '{0}' group by substr(record_date, 6,2)".format(startDate))
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        # query = query + " where record_date <= '{0}'".format(endDate)
+        all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes where record_date <= '{0}' group by substr(record_date, 6,2)".format(endDate))
+    else:
+        all_notes = PatientNotes.objects.raw("select '0' as id, count(record_date) as month_count, substr(record_date, 6,2) as month from reports_patientnotes group by substr(record_date, 6,2)")
 
 
     # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
@@ -184,7 +261,24 @@ def monthly_diagnosis_graph(request):
 @api_view(['GET'])
 def age_dist(request):
 
-    all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
+
+    print("DATE FILTER ", startDate)
+    query = "select * from reports_patientnotes"
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        query = query + " where record_date >= '{0}'".format(startDate)
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        query = query + " where record_date <= '{0}'".format(endDate)
+    print("QUERY= ", query)
+    all_notes = PatientNotes.objects.raw(query)
     age_data = [0, 0, 0, 0, 0, 0]
     age_trailing_vars = ["yo", 'y.o', 'y/o',
                          'year-old', 'year old', 'years old']
@@ -192,15 +286,15 @@ def age_dist(request):
         # print(note)
         age_var_found = []
         for my_var in age_trailing_vars:
-            if my_var in note['history']:
+            if my_var in note.history:
                 age_var_found.append(my_var)
         # print(age_var_found)
         if len(age_var_found) > 0:
-            my_index = note['history'].index(age_var_found[0])
+            my_index = note.history.index(age_var_found[0])
             age_strs = []
-            age_strs.append(note["history"][my_index-3])
-            age_strs.append(note["history"][my_index-2])
-            age_strs.append(note["history"][my_index-1])
+            age_strs.append(note.history[my_index-3])
+            age_strs.append(note.history[my_index-2])
+            age_strs.append(note.history[my_index-1])
             for age_str in age_strs:
                 if not age_str.isnumeric():
                     age_strs.remove(age_str)
@@ -233,20 +327,38 @@ def age_dist(request):
 @api_view(['GET'])
 def most_freq(request):
 
-    # all_notes = PatientNotes.objects.values('id', 'record_date', 'history') 
+   
+    all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    startDate = request.query_params['startDate']
+    endDate = request.query_params['endDate']
+    if(request.query_params['genderFilter'] != 'default'):
+        all_notes = all_notes.filter(history__icontains = request.query_params['genderFilter'])
+    if(startDate != "" and endDate != ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        print("UPDATED DATE FILTER ", startDate)
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
+        all_notes = all_notes.filter(record_date__gte=startDate, record_date__lte=endDate)
+    elif(startDate != "" and endDate == ""):
+        # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        all_notes = all_notes.filter(record_date__gte=startDate)
+    elif(startDate == "" and endDate != ""):
+        # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
+        all_notes = all_notes.filter(record_date__lte=endDate)
+     
     words_list = [{"text": 'Abdominal Pain', "count": 0}, {"text": 'Stomach Ache', "count": 0}, {"text": 'Headache', "count": 0}, {"text": 'Dizziness', "count": 0}, {"text": 'Fever', "count": 0}, {
         "text": 'Cough', "count": 0}, {"text": 'Palpitations', "count": 0}, {"text": 'nausea', "count": 0}, {"text": 'vomiting', "count": 0}, {"text": 'anxiety', "count": 0}]
     
-    # for word in words_list:
-    #     for note in all_notes:
-    #         if word["text"].lower() in note['history'].lower():
-    #             word["count"] += 1
+    
+    for word in words_list:
+        for note in all_notes:
+            if word["text"].lower() in note['history'].lower():
+                word["count"] += 1
     
 
-    for word in words_list:
-        count_notes = PatientNotes.objects.raw("select id, count(*) as counts from reports_patientnotes where lower(history) like '%{0}%'".format(word["text"].lower()))[0]
-        # print("NOTES = ", count_notes)
-        word["count"] = count_notes.counts
+    # for word in words_list:
+    #     all_notes = PatientNotes.objects.raw("select id, count(*) as counts, history from reports_patientnotes where lower(history) like '%{0}%'".format(word["text"].lower()))[0]
+    #     # print("NOTES = ", count_notes)
+    #     word["count"] = all_notes.counts
 
     sorted_words = sorted(words_list, key=lambda d: d['count'], reverse=True)
     top5 = sorted_words[:5]
