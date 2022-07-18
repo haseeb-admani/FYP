@@ -174,21 +174,22 @@ def gender_dist_graph(request):
         print("UPDATED DATE FILTER ", startDate)
         # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%m-%d')
         # query = query + " where record_date >= '{0}' and record_date <= '{1}'".format(startDate, endDate)
-        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date >= '{0}' and record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' and record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(startDate, endDate))[0]
+        db_response = PatientNotes.objects.raw("select id, count(*) as all_count, (select count(*) from reports_patientnotes where history like '%__-year-old male%' or history like '%__-year-old m %' or history like '% y.o.m%' or history like '%y.o. m%' or history like '%yo m %' or history like '% yo man%' or history like '% yo male%' or history like '%yo m,%' or history like '%yo male,%' or history like '% y/o m %' or history like '% y/o male%' or history like '% yo/m%' or history like '% male %' or history like '%yom %' or history like '%year old m%' or history like '%yo m.%' or history like '%yo young man %' or history like '%yo, m %' or history like '% m %' or history like '% yo, m,%' or history like '%yo man%' or history like '%old man%' or history like '%y/o man%' or history like '%yM') and (record_date >= '{0}' and record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' and record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(startDate, endDate))[0]
     elif(startDate != "" and endDate == ""):
         # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%d-%m')
         # query = query + " where record_date >= '{0}'".format(startDate)
-        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date >= '{0}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' )) as female_count from reports_patientnotes limit 1".format(startDate))[0]
+        db_response = PatientNotes.objects.raw("select id, count(*) as all_count, (select count(*) from reports_patientnotes where history like '%__-year-old male%' or history like '%__-year-old m %' or history like '% y.o.m%' or history like '%y.o. m%' or history like '%yo m %' or history like '% yo man%' or history like '% yo male%' or history like '%yo m,%' or history like '%yo male,%' or history like '% y/o m %' or history like '% y/o male%' or history like '% yo/m%' or history like '% male %' or history like '%yom %' or history like '%year old m%' or history like '%yo m.%' or history like '%yo young man %' or history like '%yo, m %' or history like '% m %' or history like '% yo, m,%' or history like '%yo man%' or history like '%old man%' or history like '%y/o man%' or history like '%yM') and (record_date >= '{0}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date >= '{0}' )) as female_count from reports_patientnotes limit 1".format(startDate))[0]
     elif(startDate == "" and endDate != ""):
         # endDate = datetime.strptime(endDate, "%Y-%m-%d").strftime('%Y-%d-%m')
         # query = query + " where record_date <= '{0}'".format(endDate)
-        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where (history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') and (record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(endDate))[0]
+        db_response = PatientNotes.objects.raw("select id, count(*) as all_count, (select count(*) from reports_patientnotes where history like '%__-year-old male%' or history like '%__-year-old m %' or history like '% y.o.m%' or history like '%y.o. m%' or history like '%yo m %' or history like '% yo man%' or history like '% yo male%' or history like '%yo m,%' or history like '%yo male,%' or history like '% y/o m %' or history like '% y/o male%' or history like '% yo/m%' or history like '% male %' or history like '%yom %' or history like '%year old m%' or history like '%yo m.%' or history like '%yo young man %' or history like '%yo, m %' or history like '% m %' or history like '% yo, m,%' or history like '%yo man%' or history like '%old man%' or history like '%y/o man%' or history like '%yM') and (record_date <= '{1}')) as male_count,(select count(*) from reports_patientnotes where (history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') and (record_date <= '{1}')) as female_count from reports_patientnotes limit 1".format(endDate))[0]
     else:
-        db_response = PatientNotes.objects.raw("select id, (select count(*) from reports_patientnotes where history like '%Male%' or history like '__M%' or history like '_M%' or history like 'male') as male_count,(select count(*) from reports_patientnotes where history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') as female_count from reports_patientnotes limit 1")[0]
+        db_response = PatientNotes.objects.raw("select id, count(*) as all_count, (select count(*) from reports_patientnotes where history like '%__-year-old male%' or history like '%__-year-old m %' or history like '% y.o.m%' or history like '%y.o. m%' or history like '%yo m %' or history like '% yo man%' or history like '% yo male%' or history like '%yo m,%' or history like '%yo male,%' or history like '% y/o m %' or history like '% y/o male%' or history like '% yo/m%' or history like '% male %' or history like '%yom %' or history like '%year old m%' or history like '%yo m.%' or history like '%yo young man %' or history like '%yo, m %' or history like '% m %' or history like '% yo, m,%' or history like '%yo man%' or history like '%old man%' or history like '%y/o man%' or history like '%yM') as male_count,(select count(*) from reports_patientnotes where history like '%Female%' or history like '__F%' or history like '_F%' or history like 'female') as female_count from reports_patientnotes limit 1")[0]
     # print("DB RESPONSE = ", db_response.female_count)
     # all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
     male_count = db_response.male_count
     female_count = db_response.female_count
+    all_count = db_response.all_count
     # for note in all_notes:
     #     # print(note)
     #     if "male" in note['history'].lower():
@@ -199,7 +200,8 @@ def gender_dist_graph(request):
 
     gender_dist = {
         'male_count': male_count,
-        'female_count': female_count
+        'female_count': female_count,
+        'uncategorized': all_count-male_count-female_count
     }
     return Response(gender_dist)
 
@@ -329,9 +331,16 @@ def most_freq(request):
 
    
     all_notes = PatientNotes.objects.values('id', 'record_date', 'history')
+    all_count = all_notes.count()
     startDate = request.query_params['startDate']
     endDate = request.query_params['endDate']
-    if(request.query_params['genderFilter'] != 'default'):
+    if(request.query_params['genderFilter'] == 'uncategorized'):
+        print("BEFORE FILTER SIZE", all_notes.count())
+        all_notes = all_notes.exclude(history__icontains = ' male ')
+        print("FIRST FILTER SIZE", all_notes.count())
+        all_notes = all_notes.exclude(history__icontains = ' female ')
+        print("SECOND FILTER SIZE", all_notes.count())
+    elif(request.query_params['genderFilter'] != 'default'):
         all_notes = all_notes.filter(history__icontains = request.query_params['genderFilter'])
     if(startDate != "" and endDate != ""):
         # startDate = datetime.strptime(startDate, "%Y-%m-%d").strftime('%Y-%m-%d')
