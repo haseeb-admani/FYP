@@ -583,15 +583,15 @@
               endDate: this.dateFilter.endDate
             }
         }).then(res => {
-          //console.log("in gender response ", res)
+          console.log("in gender response ", res)
           const genderDistGraph = {
             type: 'pie',
             data: {
-              labels: ['Male', 'Female'],
+              labels: ['Male', 'Female', 'Uncategorized'],
               datasets: [
                 {
                   label: 'Gender Distribution of Patients',
-                  data: [res.data.male_count, res.data.female_count],
+                  data: [res.data.male_count, res.data.female_count, res.data.uncategorized],
                   backgroundColor: this.colorsArray,
                   hoverOffset: 4
 
