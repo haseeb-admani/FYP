@@ -20,7 +20,7 @@
   </div>
 
   <div class=" p-3">
-    <h6> Total Number of records are: {{notes}} </h6>
+    <h6> Total Number of records are: ${this.numberOfRecords} </h6>
     <hr />
     <div class="row mt-4">
 
@@ -68,7 +68,7 @@
               <button type="button" @click="setGenderFilter('default')">Default</button> <br>
               <button type="button" @click="setGenderFilter('male')">Male</button> <br>
               <button type="button" @click="setGenderFilter('female')">Female</button> <br>
-              <!-- <button type="button" @click="myTestFunction()">Uncategorized</button> <br> -->
+              <button type="button" @click="setGenderFilter('uncategorized')">Uncategorized</button> <br>
 
             </div>
           </div>
@@ -584,6 +584,7 @@
             }
         }).then(res => {
           console.log("in gender response ", res)
+          this.numberOfRecords = res.data.male_count + res.data.female_count + res.data.uncategorized
           const genderDistGraph = {
             type: 'pie',
             data: {
