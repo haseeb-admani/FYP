@@ -45,9 +45,9 @@ def create_entries(sender, instance, **kwargs):
     for row in data.itertuples():
         # print(row)
         print(row.case_num)
-        if(row.pn_history.strip() == ""):
+        if(row.history.strip() == ""):
             continue
         pn = PatientNotes.objects.create(
-            case_num=row.case_num, history=row.pn_history, record_date=today)
+            case_num=row.case_num, history=row.history, record_date=today)
         print(pn.record_date)
         pn.save()
