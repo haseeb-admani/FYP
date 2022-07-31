@@ -1,0 +1,44 @@
+To create a virtual environment, first install the virtualenv module using pip, with the following command:
+
+pip install virtualenv
+
+Then, navigate the terminal to the src folder of the project and run the following command:
+
+python -m venv <virtual-environment-name>
+
+Next, activate the virtual environment using the following command:
+
+For MacOS/linux:
+
+source env/bin/activate
+
+For Windows:
+
+CMD:
+env/Scripts/activate.bat
+
+Powershell:
+env/Scripts/Activate.ps1
+
+There is a requirements.txt file in the folder that contains all the packages and libraries being used. Simply use the following command to install all the dependencies:
+
+pip install -r requirements.txt
+
+After all the dependencies are installed, run the application using the following command:
+
+python manage.py runserver
+
+
+When the application starts running, input the following address in your browser:
+
+http://127.0.0.1:8000
+
+You will get a sign in page where you also have the option of signing up and creating an account. Please create a new account following the instruction on that page, which is a fairly simple process.
+
+To upload a file, use a CSV file that has 3 columns
+
+case_num - which will be a number, representing a patient number
+
+history - free text, with patient history
+
+record_date - A date string in the format YYYY/MM/DD
