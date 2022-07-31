@@ -3,18 +3,20 @@
 {% block content %}
 
 <!-- <script src="https://unpkg.com/vue@3"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2  " crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <div id="app" class="row mt-4">
   <div class="row">
 
     <div class="col-sm-6">
 
-      
 
-        Start Date <input type="date" id="startdate"> &nbsp; &nbsp; &nbsp;
-        End Date <input type="date" id="enddate"> &nbsp; &nbsp; &nbsp;
-        <button @click="setDateFilter()">Update</button>
 
-      
+      Start Date <input type="date" id="startdate"> &nbsp; &nbsp; &nbsp;
+      End Date <input type="date" id="enddate"> &nbsp; &nbsp; &nbsp;
+      <button @click="setDateFilter()">Update</button>
+
+
 
     </div>
   </div>
@@ -308,9 +310,9 @@
         label: [],
         data: []
       },
-      dateFilter:{
-        startDate:'',
-        endDate:''
+      dateFilter: {
+        startDate: '',
+        endDate: ''
       },
       ageFilter: 'default',
       genderFilter: 'default',
@@ -363,7 +365,7 @@
         this.genderFilter = filter;
         this.mostFrequent()
       },
-      setDateFilter(){
+      setDateFilter() {
         this.dateFilter.startDate = document.getElementById('startdate').value
         this.dateFilter.endDate = document.getElementById('enddate').value
         this.genderDistributionGraph()
@@ -401,7 +403,7 @@
                 datasets: [{
                   label: 'Number of records',
                   data: this.searchRes4.data,
-                  backgroundColor: colorsArray,
+                  backgroundColor: colorsArray[3],
                   borderColor: [
 
                   ],
@@ -439,7 +441,7 @@
                 datasets: [{
                   label: 'Number of records',
                   data: this.searchRes3.data,
-                  backgroundColor: colorsArray,
+                  backgroundColor: colorsArray[2],
                   borderColor: [
 
                   ],
@@ -477,7 +479,7 @@
                 datasets: [{
                   label: 'Number of records',
                   data: this.searchRes2.data,
-                  backgroundColor: colorsArray,
+                  backgroundColor: colorsArray[1],
                   borderColor: [
 
                   ],
@@ -516,7 +518,7 @@
                 datasets: [{
                   label: 'Number of records',
                   data: this.searchRes1.data,
-                  backgroundColor: colorsArray,
+                  backgroundColor: colorsArray[0],
                   borderColor: [
 
                   ],
@@ -532,9 +534,9 @@
         const myData = this.combinationOfSymptoms
         axios.get('/api-symptoms', {
           params: {
-              keys: myData,
-              startDate: this.dateFilter.startDate,
-              endDate: this.dateFilter.endDate
+            keys: myData,
+            startDate: this.dateFilter.startDate,
+            endDate: this.dateFilter.endDate
           }
         }).then((res) => {
 
@@ -578,44 +580,62 @@
       genderDistributionGraph() {
 
         axios.get('gender-dist', {
-            params: {
-              startDate: this.dateFilter.startDate,
-              endDate: this.dateFilter.endDate
-            }
+          params: {
+            startDate: this.dateFilter.startDate,
+            endDate: this.dateFilter.endDate
+          }
         }).then(res => {
           console.log("in gender response ", res)
           this.numberOfRecords = res.data.male_count + res.data.female_count + res.data.uncategorized
-          const genderDistGraph = {
-            type: 'pie',
-            data: {
-              labels: ['Male', 'Female', 'Uncategorized'],
-              datasets: [
-                {
-                  label: 'Gender Distribution of Patients',
-                  data: [res.data.male_count, res.data.female_count, res.data.uncategorized],
-                  backgroundColor: this.colorsArray,
-                  hoverOffset: 4
-
-                }
-              ]
+          var data = [{
+            data: [res.data.male_count, res.data.female_count, res.data.uncategorized],
+            
+            backgroundColor: this.colorsArray,
+            //hoverOffset: 4
+          }];
+          var options = {
+            tooltips: {
+              enabled: false
             },
-
-          }
+            plugins: {
+              datalabels: {
+                formatter: (value, ctx) => {
+                  let sum = this.numberOfRecords;
+                  let dataArr = ctx.chart.data.datasets[0].data;
+                  let percentage = (value * 100 / sum).toFixed(2) + "%";
+                  return percentage;
+                },
+                color: '#fff',
+              }
+            }
+          };
+          // const genderDistGraph = 
           this.genderDistGraph?.destroy()
           let genderPieCtx = document.getElementById('gender-dist').getContext('2d');
           if (!this.genderDistGraph) {
             this.genderDistGraph?.destroy()
           }
-          this.genderDistGraph = new Chart(genderPieCtx, genderDistGraph);
+          this.genderDistGraph = new Chart(genderPieCtx, {
+            type: 'pie',
+            data: {
+              labels: ['Male', 'Female', 'Uncategorized'],
+              datasets: data,
+              
+            },
+            
+            options: options,
+            plugins: [ChartDataLabels]
+
+          });
         })
       },
 
       monthlyDiagnosisGraph() {
         axios.get('monthly', {
-            params: {
-              startDate: this.dateFilter.startDate,
-              endDate: this.dateFilter.endDate
-            }
+          params: {
+            startDate: this.dateFilter.startDate,
+            endDate: this.dateFilter.endDate
+          }
         }).then(res => {
 
           console.log("monthly ", res)
@@ -624,7 +644,7 @@
             data: {
               datasets: [{
                 data: res.data.values,
-                backgroundColor: this.colorsArray,
+                backgroundColor: '#6610f2',
                 label: 'Number of patients',
               }],
               labels: res.data.keys
@@ -673,7 +693,7 @@
         axios.get('age-dist', {
           params: {
             startDate: this.dateFilter.startDate,
-              endDate: this.dateFilter.endDate
+            endDate: this.dateFilter.endDate
           }
         }).then(res => {
 
