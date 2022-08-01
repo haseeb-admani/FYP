@@ -37,6 +37,15 @@
     display: block;
   }
   
+  .sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 20px;
+    font-size: 15px;
+  }
+
   /* Change color of dropdown links on hover */
   .dropdown-content a:hover {background-color: #ddd}
   
