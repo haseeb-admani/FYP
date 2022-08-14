@@ -1,5 +1,6 @@
 from django.db import models
-from datetime import date
+from datetime import date, datetime
+import numpy as np
 
 import pandas
 from django.db.models.signals import post_save
@@ -36,18 +37,27 @@ def create_entries(sender, instance, **kwargs):
     # if instance.rss_link:
     #     df = fp.parse(instance.rss_link)
     # elif instance.rss_file:
-    print(instance)
+    # print(instance)
     data = pandas.read_csv(instance.file)
+    data['record_date'].fillna("", inplace = True)
     # print(data)
     # all_rss = []
-    print(data.index)
+    # print(data.index)
     today = date.today()
     for row in data.itertuples():
         # print(row)
-        print(row.case_num)
-        if(row.history.strip() == ""):
+        # print(row.case_num)
+        # print("RECORD DATE = ", row.record_date)
+        today = row.record_date
+        # print("record date before if = ", today)
+        if(today == ""):
+            today = date.today()
+            
+        
+        # print("TODAY = ", today)
+        if(row.pn_history.strip() == ""):
             continue
         pn = PatientNotes.objects.create(
-            case_num=row.case_num, history=row.history, record_date=today)
-        print(pn.record_date)
+            case_num=row.case_num, history=row.pn_history, record_date=str(today))
+        # print(pn.record_date)
         pn.save()

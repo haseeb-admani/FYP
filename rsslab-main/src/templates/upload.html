@@ -17,7 +17,13 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{form|crispy}}
-    <small>Upload a CSV file with the data that is to be entered. All entries will be entered with today's date.</small>
+    <small>Upload a CSV file with the data that is to be entered.
+    <br>
+        1. patient notes column name should be "pn_history".
+        <br>
+        2. date column name should be "record_date" (Note: If the column is left empty, it will set the date to today's date).
+    </small>
+    <br>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
 </form>
 {% endblock %}
