@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date, datetime
 import numpy as np
+import sqlite3 as db
 
 import pandas
 from django.db.models.signals import post_save
@@ -39,25 +40,27 @@ def create_entries(sender, instance, **kwargs):
     # elif instance.rss_file:
     # print(instance)
     data = pandas.read_csv(instance.file)
-    data['record_date'].fillna("", inplace = True)
+    data['record_date'].fillna(str(date.today()), inplace = True)
     # print(data)
     # all_rss = []
     # print(data.index)
     today = date.today()
-    for row in data.itertuples():
-        # print(row)
-        # print(row.case_num)
-        # print("RECORD DATE = ", row.record_date)
-        today = row.record_date
-        # print("record date before if = ", today)
-        if(today == ""):
-            today = date.today()
+    conn = db.connect('db.sqlite3')
+    data.to_sql(name='reports_patientnotes', con=conn, if_exists="append", index = False)
+    # for row in data.itertuples():
+    #     # print(row)
+    #     # print(row.case_num)
+    #     # print("RECORD DATE = ", row.record_date)
+    #     today = row.record_date
+    #     # print("record date before if = ", today)
+    #     if(today == ""):
+    #         today = date.today()
             
         
-        # print("TODAY = ", today)
-        if(row.pn_history.strip() == ""):
-            continue
-        pn = PatientNotes.objects.create(
-            case_num=row.case_num, history=row.pn_history, record_date=str(today))
-        # print(pn.record_date)
-        pn.save()
+    #     # print("TODAY = ", today)
+    #     if(row.pn_history.strip() == ""):
+    #         continue
+    #     pn = PatientNotes.objects.create(
+    #         case_num=row.case_num, history=row.pn_history, record_date=str(today))
+    #     # print(pn.record_date)
+    #     pn.save()
