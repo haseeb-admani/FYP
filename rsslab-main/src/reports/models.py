@@ -46,7 +46,8 @@ def create_entries(sender, instance, **kwargs):
     # print(data.index)
     today = date.today()
     conn = db.connect('db.sqlite3')
-    data.to_sql(name='reports_patientnotes', con=conn, if_exists="append", index = True, index_label = "id")
+    data.to_sql(name='reports_patientnotes', con=conn, if_exists="append", index = False)
+    conn.commit()
     # for row in data.itertuples():
     #     # print(row)
     #     # print(row.case_num)
